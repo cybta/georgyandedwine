@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 
 interface Guest {
@@ -11,6 +12,12 @@ const LovebirdsDashboard = () => {
   const [list, setList] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | number | null>(null);
+
+  // --- New Filter State ---
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'yes' | 'no' | 'none'
+  >('all');
 
   useEffect(() => {
     const fetchGuests = async () => {
@@ -42,11 +49,60 @@ const LovebirdsDashboard = () => {
     return "⏳ Didn't reply";
   };
 
+  // --- Filtering Logic ---
+  const filteredList = list.filter((guest) => {
+    const matchesSearch = guest.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'yes' && guest.isComing === true) ||
+      (statusFilter === 'no' && guest.isComing === false) ||
+      (statusFilter === 'none' &&
+        (guest.isComing === null || guest.isComing === undefined));
+
+    return matchesSearch && matchesStatus;
+  });
+
   if (loading) return <div style={{ padding: '20px' }}>Loading...</div>;
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h2 style={{ color: '#333' }}>Guest List</h2>
+    <div
+      style={{
+        padding: '20px',
+        fontFamily: 'sans-serif',
+        maxWidth: '1200px',
+        margin: '0 auto',
+      }}
+    >
+      <h2 style={{ color: '#333' }}>🐦 Lovebirds Dashboard</h2>
+
+      {/* --- Filter Bar --- */}
+      <div style={filterBarStyle}>
+        <input
+          type='text'
+          placeholder='Search by name...'
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={inputStyle}
+        />
+
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as any)}
+          style={selectStyle}
+        >
+          <option value='all'>All Statuses</option>
+          <option value='yes'>✅ Coming</option>
+          <option value='no'>❌ Not Coming</option>
+          <option value='none'>⏳ Didn't Reply</option>
+        </select>
+
+        <div style={{ marginLeft: 'auto', color: '#888', fontSize: '14px' }}>
+          Showing {filteredList.length} of {list.length} guests
+        </div>
+      </div>
 
       <table
         style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}
@@ -60,7 +116,7 @@ const LovebirdsDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {list.map((guest) => (
+          {filteredList.map((guest) => (
             <tr key={guest.id} style={{ borderBottom: '1px solid #eee' }}>
               <td style={{ ...cellStyle, fontWeight: 'bold' }}>{guest.name}</td>
               <td style={cellStyle}>{getStatus(guest.isComing)}</td>
@@ -83,7 +139,6 @@ const LovebirdsDashboard = () => {
                   <button
                     onClick={() => handleCopy(guest.id)}
                     style={copyButtonStyle}
-                    title='Copy Personal Link'
                   >
                     {copiedId === guest.id ? '✅' : '📋'}
                   </button>
@@ -91,11 +146,7 @@ const LovebirdsDashboard = () => {
                     href={`https://www.georgyandedwine.com/${guest.id}`}
                     target='_blank'
                     rel='noreferrer'
-                    style={{
-                      fontSize: '12px',
-                      color: '#007bff',
-                      textDecoration: 'none',
-                    }}
+                    style={linkStyle}
                   >
                     Open Page
                   </a>
@@ -105,13 +156,48 @@ const LovebirdsDashboard = () => {
           ))}
         </tbody>
       </table>
+
+      {filteredList.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+          No guests found matching your filters.
+        </div>
+      )}
     </div>
   );
 };
 
+// --- Styles ---
 const cellStyle: React.CSSProperties = {
   padding: '12px 15px',
   borderBottom: '1px solid #ddd',
+};
+
+const filterBarStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '15px',
+  marginBottom: '20px',
+  alignItems: 'center',
+  backgroundColor: '#fff',
+  padding: '15px',
+  borderRadius: '8px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+};
+
+const inputStyle: React.CSSProperties = {
+  padding: '10px',
+  borderRadius: '6px',
+  border: '1px solid #ddd',
+  width: '250px',
+  fontSize: '14px',
+};
+
+const selectStyle: React.CSSProperties = {
+  padding: '10px',
+  borderRadius: '6px',
+  border: '1px solid #ddd',
+  backgroundColor: '#fff',
+  fontSize: '14px',
+  cursor: 'pointer',
 };
 
 const copyButtonStyle: React.CSSProperties = {
@@ -125,6 +211,13 @@ const copyButtonStyle: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+};
+
+const linkStyle: React.CSSProperties = {
+  fontSize: '12px',
+  color: '#007bff',
+  textDecoration: 'none',
+  fontWeight: 'bold',
 };
 
 export default LovebirdsDashboard;
