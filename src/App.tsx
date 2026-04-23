@@ -3,6 +3,7 @@ import LovebirdsDashboard from './views/LovebirdsDashbord';
 
 import GuestPage from './views/GuestPage'; // We will create this next
 import Home from './views/Home';
+import './App.css';
 
 function App() {
   return (

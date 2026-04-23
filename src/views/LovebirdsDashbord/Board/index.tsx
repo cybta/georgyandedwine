@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 interface Guest {
   id: string | number;
   name: string;
+  lang: 'en' | 'ru';
   isComing: boolean | null | undefined;
   note: string;
 }
@@ -12,6 +13,7 @@ const LovebirdsDashboard = () => {
   const [list, setList] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | number | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | number | null>(null);
 
   // --- New Filter State ---
   const [searchTerm, setSearchTerm] = useState('');
@@ -67,6 +69,40 @@ const LovebirdsDashboard = () => {
 
   if (loading) return <div style={{ padding: '20px' }}>Loading...</div>;
 
+  const toggleLanguage = async (guest: Guest, newLang: 'en' | 'ru') => {
+    setUpdatingId(guest.id);
+
+    // Prepare the full object as required by your API
+    const updatedGuest = {
+      ...guest,
+      lang: newLang,
+    };
+
+    try {
+      const response = await fetch(
+        `https://rjj5lzk50b.execute-api.us-east-1.amazonaws.com/prod/guests/${guest.id}`,
+        {
+          method: 'POST',
+          // Sending the full object instead of just { lang: newLang }
+          body: JSON.stringify(updatedGuest),
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+
+      if (response.ok) {
+        setList((prev) =>
+          prev.map((g) => (g.id === guest.id ? { ...g, lang: newLang } : g)),
+        );
+      } else {
+        console.error('Server responded with an error');
+      }
+    } catch (error) {
+      console.error('Update error:', error);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   return (
     <div
       style={{
@@ -110,6 +146,7 @@ const LovebirdsDashboard = () => {
         <thead>
           <tr style={{ backgroundColor: '#f8f9fa', textAlign: 'left' }}>
             <th style={cellStyle}>Guest Name</th>
+            <th style={cellStyle}>language</th>
             <th style={cellStyle}>Coming?</th>
             <th style={cellStyle}>Note</th>
             <th style={cellStyle}>Actions</th>
@@ -119,6 +156,39 @@ const LovebirdsDashboard = () => {
           {filteredList.map((guest) => (
             <tr key={guest.id} style={{ borderBottom: '1px solid #eee' }}>
               <td style={{ ...cellStyle, fontWeight: 'bold' }}>{guest.name}</td>
+              <td style={cellStyle}>
+                <div style={radioGroupStyle}>
+                  <button
+                    onClick={() =>
+                      guest.lang !== 'en' && toggleLanguage(guest, 'en')
+                    }
+                    disabled={updatingId === guest.id}
+                    style={{
+                      ...radioButtonStyle,
+                      backgroundColor: guest.lang === 'en' ? '#b2313d' : '#fff',
+                      color: guest.lang === 'en' ? '#fff' : '#333',
+                      borderRight: 'none',
+                      borderRadius: '6px 0 0 6px',
+                    }}
+                  >
+                    EN
+                  </button>
+                  <button
+                    onClick={() =>
+                      guest.lang !== 'ru' && toggleLanguage(guest, 'ru')
+                    }
+                    disabled={updatingId === guest.id}
+                    style={{
+                      ...radioButtonStyle,
+                      backgroundColor: guest.lang === 'ru' ? '#b2313d' : '#fff',
+                      color: guest.lang === 'ru' ? '#fff' : '#333',
+                      borderRadius: '0 6px 6px 0',
+                    }}
+                  >
+                    RU
+                  </button>
+                </div>
+              </td>
               <td style={cellStyle}>{getStatus(guest.isComing)}</td>
               <td
                 style={{
@@ -181,6 +251,22 @@ const filterBarStyle: React.CSSProperties = {
   padding: '15px',
   borderRadius: '8px',
   boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+};
+
+const radioGroupStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+};
+
+const radioButtonStyle: React.CSSProperties = {
+  padding: '6px 12px',
+  fontSize: '11px',
+  fontWeight: 'bold',
+  border: '1px solid #ddd',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  minWidth: '45px',
+  outline: 'none',
 };
 
 const inputStyle: React.CSSProperties = {

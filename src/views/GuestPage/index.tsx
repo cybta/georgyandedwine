@@ -1,28 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import './css/style.css';
 import { useParams } from 'react-router-dom';
+import mainData from '../components/mainData';
+import RSVPForm from './components/RSVPForm'; // Import the new component
 
 interface Guest {
   id: string | number;
   name: string;
   isComing: boolean | null | undefined;
+  lang: 'en' | 'ru';
   note: string;
 }
+
+type MainData = {
+  title: string;
+  description: string;
+  date: string;
+};
 
 const GuestPage = () => {
   const { id } = useParams<{ id: string }>();
 
-  // State Management
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
-  // Form State
+  // 1. Create the reference
+  const invitationRef = useRef<HTMLDivElement>(null);
+  const [showInvitation, setShowInvitation] = useState(false);
+
   const [tempComing, setTempComing] = useState<boolean | null | undefined>(
     null,
   );
+
   const [tempNote, setTempNote] = useState('');
   const [guestName, setGuestName] = useState('');
+  const [lang, setLang] = useState<'en' | 'ru'>('en');
+  const [data, setData] = useState<MainData>();
 
   useEffect(() => {
     const fetchGuestData = async () => {
@@ -30,15 +45,17 @@ const GuestPage = () => {
         const response = await fetch(
           'https://rjj5lzk50b.execute-api.us-east-1.amazonaws.com/prod/guests/',
         );
-        const data: Guest[] = await response.json();
-
-        // Find specific guest by ID from URL
-        const foundGuest = data.find((g) => String(g.id) === id);
+        const result: Guest[] = await response.json();
+        const foundGuest = result.find((g) => String(g.id) === id);
 
         if (foundGuest) {
           setGuestName(foundGuest.name);
           setTempComing(foundGuest.isComing);
           setTempNote(foundGuest.note || '');
+          setLang(foundGuest.lang || 'en');
+
+          const getData: MainData | undefined = mainData(foundGuest.lang);
+          setData(getData);
         }
       } catch (error) {
         console.error('Error fetching guest:', error);
@@ -46,230 +63,100 @@ const GuestPage = () => {
         setLoading(false);
       }
     };
-
     if (id) fetchGuestData();
   }, [id]);
 
+  useEffect(() => {
+    if (showInvitation && invitationRef.current) {
+      // We use a small timeout to ensure the DOM has updated the 'opacity'
+      // and layout before the scroll starts.
+      const timer = setTimeout(() => {
+        invitationRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showInvitation]);
+
   const handleSubmit = async () => {
-    // FORCE VALIDATION: Stop if no choice is made
     if (tempComing === null || tempComing === undefined) {
       setShowError(true);
       return;
     }
-
     setIsSaving(true);
     setShowError(false);
 
-    const payload = {
-      isComing: tempComing,
-      note: tempNote,
-    };
-
     try {
-      // Sending update to the API
       await fetch(
         `https://rjj5lzk50b.execute-api.us-east-1.amazonaws.com/prod/guests/${id}`,
         {
           method: 'POST',
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            isComing: tempComing,
+            note: tempNote,
+            lang: lang,
+          }),
           headers: { 'Content-Type': 'application/json' },
         },
       );
-
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 4000); // Hide success message after 4s
+      setTimeout(() => setSuccess(false), 4000);
     } catch (error) {
-      console.error('Failed to save:', error);
+      console.log(error);
       alert('Something went wrong saving your RSVP.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Determine if the submit button should look active
-  const isFormValid = tempComing !== null && tempComing !== undefined;
+  const handleStart = () => {
+    setShowInvitation(true);
+  };
 
-  if (loading) return <div style={containerStyle}>Loading invitation...</div>;
-  if (!guestName)
-    return <div style={containerStyle}>Invitation not found.</div>;
+  if (loading) return <div className='container'>Loading invitation...</div>;
+  if (!guestName) return <div className='container'>Invitation not found.</div>;
 
   return (
-    <div style={containerStyle}>
-      <div style={cardStyle}>
-        <h1 style={{ color: '#b2313d', margin: '0 0 10px 0' }}>
-          Hi {guestName}!
-        </h1>
-        <p style={{ color: '#666', marginBottom: '30px' }}>
-          We'd love to know if you can join us.
-        </p>
+    <div className='container'>
+      <section className='welcome-screen pad-20'>
+        <h2 className='guest-greeting'>{guestName}!</h2>
 
-        {/* --- RSVP Toggle Section --- */}
-        <div style={{ marginBottom: '30px' }}>
-          <p style={{ fontWeight: 'bold', marginBottom: '15px' }}>
-            Will you be attending? <span style={{ color: '#b2313d' }}>*</span>
-          </p>
+        <h1>{data?.title}</h1>
+        <h2>{data?.description}</h2>
+        <h3>{data?.date}</h3>
 
-          {showError && (
-            <p
-              style={{
-                color: '#b2313d',
-                fontSize: '14px',
-                marginBottom: '10px',
-              }}
-            >
-              Please select an option before submitting.
-            </p>
-          )}
+        <p className='sub-text'>We'd love to know if you can join us.</p>
 
-          <div style={buttonGroupStyle}>
-            <button
-              onClick={() => {
-                setTempComing(true);
-                setShowError(false);
-              }}
-              style={{
-                ...toggleButtonStyle,
-                backgroundColor: tempComing === true ? '#28a745' : '#fff',
-                color: tempComing === true ? '#fff' : '#333',
-                borderColor:
-                  tempComing === true
-                    ? '#28a745'
-                    : showError
-                      ? '#b2313d'
-                      : '#ddd',
-              }}
-            >
-              Yes, I'm Coming!
-            </button>
-            <button
-              onClick={() => {
-                setTempComing(false);
-                setShowError(false);
-              }}
-              style={{
-                ...toggleButtonStyle,
-                backgroundColor: tempComing === false ? '#b2313d' : '#fff',
-                color: tempComing === false ? '#fff' : '#333',
-                borderColor:
-                  tempComing === false
-                    ? '#b2313d'
-                    : showError
-                      ? '#b2313d'
-                      : '#ddd',
-              }}
-            >
-              Regretfully, No
-            </button>
-          </div>
-        </div>
-
-        {/* --- Notes Section --- */}
-        <div style={{ textAlign: 'left', marginBottom: '30px' }}>
-          <label style={labelStyle}>Add a note (dietary needs, etc):</label>
-          <textarea
-            value={tempNote}
-            onChange={(e) => setTempNote(e.target.value)}
-            placeholder='Your message here...'
-            style={textareaStyle}
-          />
-        </div>
-
-        {/* --- Submit Button --- */}
         <button
-          onClick={handleSubmit}
-          disabled={isSaving}
-          style={{
-            ...submitButtonStyle,
-            backgroundColor: !isFormValid
-              ? '#eee'
-              : isSaving
-                ? '#aaa'
-                : '#b2313d',
-            color: !isFormValid ? '#999' : '#fff',
-            cursor: !isFormValid ? 'not-allowed' : 'pointer',
-          }}
+          className={showInvitation ? 'hide' : 'show'}
+          onClick={() => handleStart()}
         >
-          {isSaving ? 'Saving...' : 'Submit My RSVP'}
+          Start
         </button>
+      </section>
 
-        {success && (
-          <div
-            style={{ marginTop: '20px', color: '#28a745', fontWeight: 'bold' }}
-          >
-            🎉 Thank you! Your RSVP has been received.
-          </div>
-        )}
-      </div>
+      <section
+        ref={invitationRef}
+        className={`invitation-details pad-20 ${showInvitation ? 'show-invitation' : 'hide-invitation'}`}
+      >
+        <RSVPForm
+          tempComing={tempComing}
+          setTempComing={setTempComing}
+          tempNote={tempNote}
+          setTempNote={setTempNote}
+          handleSubmit={handleSubmit}
+          isSaving={isSaving}
+          showError={showError}
+          setShowError={setShowError}
+          success={success}
+          isFormValid={tempComing !== null && tempComing !== undefined}
+        />
+      </section>
     </div>
   );
-};
-
-// --- Styles ---
-const containerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  minHeight: '100vh',
-  backgroundColor: '#fff5f8',
-  padding: '20px',
-};
-
-const cardStyle: React.CSSProperties = {
-  backgroundColor: 'white',
-  padding: '40px',
-  borderRadius: '24px',
-  boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-  textAlign: 'center',
-  maxWidth: '450px',
-  width: '100%',
-  fontFamily: 'sans-serif',
-};
-
-const buttonGroupStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '15px',
-  justifyContent: 'center',
-};
-
-const toggleButtonStyle: React.CSSProperties = {
-  padding: '14px 20px',
-  border: '2px solid',
-  borderRadius: '12px',
-  cursor: 'pointer',
-  transition: 'all 0.2s ease',
-  fontWeight: 'bold',
-  flex: 1,
-  fontSize: '14px',
-};
-
-const labelStyle: React.CSSProperties = {
-  fontWeight: 'bold',
-  display: 'block',
-  marginBottom: '10px',
-  fontSize: '14px',
-  color: '#444',
-};
-
-const textareaStyle: React.CSSProperties = {
-  width: '100%',
-  height: '120px',
-  padding: '12px',
-  borderRadius: '12px',
-  border: '1px solid #ddd',
-  fontFamily: 'inherit',
-  resize: 'none',
-  boxSizing: 'border-box',
-  outline: 'none',
-};
-
-const submitButtonStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '16px',
-  border: 'none',
-  borderRadius: '12px',
-  fontWeight: 'bold',
-  fontSize: '16px',
-  transition: 'all 0.3s',
 };
 
 export default GuestPage;
