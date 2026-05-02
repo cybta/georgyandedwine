@@ -1,4 +1,3 @@
-import React from 'react';
 import mainData from '../../components/invitationData'; // Assuming this is your logic function
 import '../css/invitationDataUI.css';
 
