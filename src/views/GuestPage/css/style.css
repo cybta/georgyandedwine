@@ -6,50 +6,50 @@
   align-items: center;
   min-height: 100vh;
   width: 100%;
-  font-family: sans-serif;
+  font-family: 'Georgia', serif; /* Consistent font */
   box-sizing: border-box;
+  color: #333;
 }
 
-.hide {
-  display: none;
+.start-btn {
+  /* Initial State: Gold background, white text */
+  background-color: #B89058;
+  color: #FFFFFF;
+  border: 2px solid #B89058; /* Maintain border so size doesn't shift on hover */
+  padding: 16px 32px;
+  font-family: 'Georgia', serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.4s ease; /* Smooth transition for background and text */
+  border-radius: 4px;
 }
 
-.welcome-screen {
-  height: 100vh;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-  align-items: center;
-  color: #efefef;
-  font-size: 0.8em;
+.start-btn:hover {
+  /* Hover State: White background, gold text */
+  background-color: #FFFFFF;
+  color: #B89058;
+  border: 2px solid #B89058; /* Keeps the gold outline visible against white background */
 }
 
-.hide-invitation {
-  display: none;
-  opacity: 0;
-  pointer-events: none; /* Prevent clicking hidden items */
-}
-
-.show-invitation {
-  display: block;
-  opacity: 1;
-  pointer-events: auto;
+/* Optional: Slight shadow on hover for a "lifted" paper effect */
+.submit-btn:hover {
+  box-shadow: 0 4px 12px rgba(184, 144, 88, 0.2);
 }
 
 .invitation-details {
-  min-height: 100vh;
-  width: 100%;
   background: #fff;
 }
 
-.guest-greeting {
-  color: #b2313d;
-  margin: 0 0 10px 0;
+/* Typography Overrides */
+.primary, .guest-greeting, .input-label {
+  color: #B89058;
+  font-family: 'Georgia', serif;
 }
 
 .sub-text {
-  color: #666;
+  color: rgba(184, 144, 88, 0.7); /* Softened gold */
   margin-bottom: 30px;
 }
 
@@ -59,94 +59,112 @@
   gap: 15px;
   justify-content: center;
   margin-bottom: 30px;
+  width: 100%;
+  max-width: 400px;
 }
 
 .toggle-button {
   padding: 14px 20px;
-  border: 2px solid #ddd;
-  border-radius: 12px;
+  border: 1px solid #B89058; /* Gold border */
+  border-radius: 4px; /* Slightly sharper for a formal look */
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: bold;
+  transition: all 0.3s ease;
+  font-family: 'Georgia', serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   flex: 1;
-  font-size: 14px;
-  background-color: #fff;
-  color: #333;
+  font-size: 13px;
+  background-color: transparent;
+  color: #B89058;
+}
+
+.toggle-button:hover {
+  background-color: rgba(184, 144, 88, 0.1);
 }
 
 /* Specific Toggle States */
 .toggle-button.active-yes {
-  background-color: #28a745;
+  background-color: #B89058; /* Brand Gold */
   color: #fff;
-  border-color: #28a745;
+  border-color: #B89058;
 }
 
 .toggle-button.active-no {
-  background-color: #b2313d;
+  background-color: #555; /* Neutral Dark for 'No' */
   color: #fff;
-  border-color: #b2313d;
+  border-color: #555;
 }
 
 .toggle-button.error-border {
-  border-color: #b2313d;
+  border-color: #d9534f; /* Soft red for errors */
 }
 
 /* Form Elements */
 .input-label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #444;
-  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 12px;
 }
 
 .note-textarea {
   width: 100%;
   height: 120px;
   padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
+  border-radius: 4px;
+  border: 1px solid #B89058;
   font-family: inherit;
   resize: none;
   box-sizing: border-box;
   outline: none;
   margin-bottom: 30px;
+  background-color: #fffaf5; /* Cream background */
 }
 
 /* Submit Button */
 .submit-btn {
   width: 100%;
+  max-width: 400px;
   padding: 16px;
-  border: none;
-  border-radius: 12px;
-  font-weight: bold;
-  font-size: 16px;
-  transition: all 0.3s;
+  border: 1px solid #B89058;
+  border-radius: 4px;
+  font-family: 'Georgia', serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 14px;
+  transition: all 0.4s;
   cursor: pointer;
-  background-color: #b2313d;
+  background-color: #B89058;
   color: #fff;
 }
 
+.submit-btn:hover {
+  background-color: #a37d45; /* Slightly darker gold on hover */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
 .submit-btn:disabled {
-  background-color: #eee;
+  background-color: #e0e0e0;
+  border-color: #ccc;
   color: #999;
   cursor: not-allowed;
 }
 
-.submit-btn.saving {
-  background-color: #aaa;
-}
-
 /* Feedback Messages */
 .error-msg {
-  color: #b2313d;
-  font-size: 14px;
+  color: #d9534f;
+  font-size: 13px;
   margin-bottom: 10px;
+  font-style: italic;
 }
 
 .success-msg {
   margin-top: 20px;
-  color: #28a745;
+  color: #B89058;
   font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Hidden States */
+.hide, .hide-invitation {
+  display: none;
 }

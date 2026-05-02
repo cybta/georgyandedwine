@@ -3,6 +3,7 @@ import './css/style.css';
 import { useParams } from 'react-router-dom';
 import mainData from '../components/mainData';
 import RSVPForm from './components/RSVPForm'; // Import the new component
+import InvitationDataUI from './components/InvitationDataUI'; // Import the new component
 
 interface Guest {
   id: string | number;
@@ -131,7 +132,7 @@ const GuestPage = () => {
         <p className='sub-text'>We'd love to know if you can join us.</p>
 
         <button
-          className={showInvitation ? 'hide' : 'show'}
+          className={ showInvitation ? 'start-btn hide' : 'start-btn show'}
           onClick={() => handleStart()}
         >
           Start
@@ -142,6 +143,9 @@ const GuestPage = () => {
         ref={invitationRef}
         className={`invitation-details pad-20 ${showInvitation ? 'show-invitation' : 'hide-invitation'}`}
       >
+
+        <InvitationDataUI lang={lang} />
+
         <RSVPForm
           tempComing={tempComing}
           setTempComing={setTempComing}

@@ -14,7 +14,7 @@ const Index = () => {
   const data: MainData | undefined = mainData(lang as 'en' | 'ru');
 
   return (
-    <div className='homepage'>
+    <div className='homepage welcome-screen'>
       <h1>{data?.title}</h1>
       <h2>{data?.description}</h2>
       <h3>{data?.date}</h3>
