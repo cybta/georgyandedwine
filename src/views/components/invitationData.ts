@@ -1,7 +1,7 @@
 export type InvitationData = {
   quote: {
     text: string;
-    ref: text;
+    ref: string;
   }
   intro: string;
   georgyFamily: string;
@@ -9,7 +9,6 @@ export type InvitationData = {
   invitationText: string;
   names: string;
   date: string;
-
   celebration: {
     title: string;
     restaurantData: {
