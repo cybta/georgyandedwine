@@ -75,6 +75,7 @@ h1.namesGEmain {
   margin-bottom: 30px;
   width: 100%;
   max-width: 400px;
+  margin: 0 auto;
 }
 
 .toggle-button {
@@ -87,7 +88,7 @@ h1.namesGEmain {
   text-transform: uppercase;
   letter-spacing: 1px;
   flex: 1;
-  font-size: 13px;
+  font-size: 12px;
   background-color: transparent;
   color: #B89058;
 }
@@ -111,6 +112,10 @@ h1.namesGEmain {
 
 .toggle-button.error-border {
   border-color: #d9534f; /* Soft red for errors */
+}
+
+.rsvp-card{
+  text-align: center;
 }
 
 /* Form Elements */

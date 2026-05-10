@@ -7,6 +7,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  max-width: 750px;
+  margin: 0 auto;
 }
 
 body::before {
@@ -17,11 +19,13 @@ body::before {
   background-position: top;
   background-position: fixed;
   width: 100%;
+  max-width: 750px;
   height: 100%;
   content: '';
   position: fixed;
   top: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1;
 }
 

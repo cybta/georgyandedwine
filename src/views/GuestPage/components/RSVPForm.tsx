@@ -52,6 +52,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
   return (
     <div className='rsvp-card'>
       <div style={{ marginBottom: '30px' }}>
+        <div>Kindly confirm your presence Before July 1st.</div>
         <p className='input-label' style={{ textAlign: 'center' }}>
           Will you be attending? <span style={{ color: '#b2313d' }}>*</span>
         </p>

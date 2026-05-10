@@ -26,10 +26,8 @@ export type InvitationData = {
 
   gift: {
     title: string;
-    gratitude: string;
     wishlistMsg: string;
     wishlistDetails: string;
-    reservationMsg: string;
   }
 };
 
@@ -41,7 +39,7 @@ const englisData: InvitationData = {
   intro: 'With joyous hearts,',
   georgyFamily: 'Oleg & Natalia Bykhanov',
   edwineFamily: 'Nazih & Lydia Saad',
-  invitationText: 'Request the honor of your presence at the wedding of their son and daughter',
+  invitationText: 'Request the honor of your presence at the wedding of',
   names: 'Georgy & Edwine',
   date: '25.July.2026',
   celebration: {
@@ -60,10 +58,8 @@ const englisData: InvitationData = {
   },
   gift: {
     title: 'Wedding Registry',
-    gratitude: 'Your love, laughter and presence are all we could wish for on our special day.',
     wishlistMsg: 'For those who wish, a wedding registry is available at',
     wishlistDetails: 'WHISHLIST HERE',
-    reservationMsg: 'Kindly confirm your presence Before July 1st.'
   }
 }
 
@@ -94,10 +90,8 @@ const russianData: InvitationData = {
   },
   gift: {
     title: 'Свадебные подарки',
-    gratitude: 'Ваша любовь, смех и присутствие — это всё, о чем мы могли бы мечтать в наш особенный день.',
     wishlistMsg: 'Для тех, кто желает сделать подарок, наш список пожеланий доступен по ссылке:',
     wishlistDetails: 'WISHLIST HERE',
-    reservationMsg: 'Kindly confirm your presence Before July 1st.'
   }
 }
 

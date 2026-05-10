@@ -83,12 +83,10 @@ const InvitationDataUI = ({ lang = 'en' }: { lang: 'en' | 'ru' }) => {
       {/* Gift Registry */}
       <section className='section gift-section'>
         <h3 className='section-title'>{data.gift.title}</h3>
-        <p className='gratitude'>{data.gift.gratitude}</p>
         <p className='wishlist-msg'>{data.gift.wishlistMsg}</p>
         <a href='#' className='wishlist-btn' target='_blank' rel='noreferrer'>
           {data.gift.wishlistDetails}
         </a>
-        <p className='wishlist-msg'>{data.gift.reservationMsg}</p>
       </section>
     </div>
   );
