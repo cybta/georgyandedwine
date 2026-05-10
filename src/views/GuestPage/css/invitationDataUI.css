@@ -62,7 +62,7 @@
   justify-content: space-between;
   font-weight: bold;
   margin: 15px 0;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   gap: 20px;
 }
 
@@ -106,13 +106,6 @@
   max-width: 80%;
   margin: 0 auto 15px;
 }
-
-@media (max-width: 380px) {
-  .families {
-    font-size: 1.1rem;
-  }
-}
-
 
 @media (max-width: 380px) {
   .families {

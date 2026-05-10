@@ -164,6 +164,7 @@ const GuestPage = () => {
   // Create audio instance
   audioRef.current = new Audio('/audio/bg-music.mp3');
   audioRef.current.loop = true; // Optional: keeps the music playing
+  audioRef.current.volume = 0.3;
 
   // Cleanup: Stop music if user leaves the page
   return () => {
@@ -184,6 +185,8 @@ const GuestPage = () => {
       });
       setIsPlaying(true);
     }
+
+    console.log('Invitation revealed, audio should play', isPlaying);
   };
 
   if (loading) return <div className='container'>Loading invitation...</div>;
