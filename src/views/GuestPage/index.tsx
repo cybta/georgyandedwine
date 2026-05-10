@@ -53,6 +53,10 @@ const GuestPage = () => {
   const [lang, setLang] = useState<'en' | 'ru'>('en');
   const [data, setData] = useState<MainData>();
 
+  // Inside GuestPage component
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false); // Optional: if you want to track play state
+
   useEffect(() => {
     if (!loading) { // Only run logic if loading is finished
       if (!showInvitation) {
@@ -156,8 +160,30 @@ const GuestPage = () => {
     }
   };
 
+  useEffect(() => {
+  // Create audio instance
+  audioRef.current = new Audio('/audio/bg-music.mp3');
+  audioRef.current.loop = true; // Optional: keeps the music playing
+
+  // Cleanup: Stop music if user leaves the page
+  return () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+  };
+}, []);
+
   const handleStart = () => {
     setShowInvitation(true);
+
+    // Play the audio
+    if (audioRef.current) {
+      audioRef.current.play().catch(error => {
+        console.error("Audio playback failed:", error);
+      });
+      setIsPlaying(true);
+    }
   };
 
   if (loading) return <div className='container'>Loading invitation...</div>;
