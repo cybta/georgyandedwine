@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import './css/style.css';
 import { useParams } from 'react-router-dom';
 import mainData from '../components/mainData';
-import RSVPForm from './components/RSVPForm'; // Import the new component
-import InvitationDataUI from './components/InvitationDataUI'; // Import the new component
+import RSVPForm from './components/RSVPForm'; 
+import InvitationDataUI from './components/InvitationDataUI';
 
 interface Guest {
   id: string | number;
@@ -11,6 +11,15 @@ interface Guest {
   isComing: boolean | null | undefined;
   lang: 'en' | 'ru';
   note: string;
+  // Added invited and coming structures
+  invited: {
+    adults: number;
+    under18: number;
+  };
+  coming?: {
+    adults: number;
+    under18: number;
+  };
 }
 
 type MainData = {
@@ -27,15 +36,20 @@ const GuestPage = () => {
   const [success, setSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
-  // 1. Create the reference
   const invitationRef = useRef<HTMLDivElement>(null);
   const [showInvitation, setShowInvitation] = useState(false);
 
-  const [tempComing, setTempComing] = useState<boolean | null | undefined>(
-    null,
-  );
-
+  const [tempComing, setTempComing] = useState<boolean | null | undefined>(null);
   const [tempNote, setTempNote] = useState('');
+  
+  // New States for counts
+  const [tempAdults, setTempAdults] = useState<number>(0);
+  const [tempUnder18, setTempUnder18] = useState<number>(0);
+  
+  // State to store the limits from the "invited" object
+  const [maxAdults, setMaxAdults] = useState<number>(0);
+  const [maxUnder18, setMaxUnder18] = useState<number>(0);
+
   const [guestName, setGuestName] = useState('');
   const [lang, setLang] = useState<'en' | 'ru'>('en');
   const [data, setData] = useState<MainData>();
@@ -54,6 +68,14 @@ const GuestPage = () => {
           setTempComing(foundGuest.isComing);
           setTempNote(foundGuest.note || '');
           setLang(foundGuest.lang || 'en');
+          
+          // Set max limits from the fetched 'invited' data
+          setMaxAdults(foundGuest.invited?.adults || 0);
+          setMaxUnder18(foundGuest.invited?.under18 || 0);
+
+          // Set initial selection based on previous RSVP or default to max
+          setTempAdults(foundGuest.coming?.adults ?? foundGuest.invited?.adults ?? 0);
+          setTempUnder18(foundGuest.coming?.under18 ?? foundGuest.invited?.under18 ?? 0);
 
           const getData: MainData | undefined = mainData(foundGuest.lang);
           setData(getData);
@@ -69,15 +91,12 @@ const GuestPage = () => {
 
   useEffect(() => {
     if (showInvitation && invitationRef.current) {
-      // We use a small timeout to ensure the DOM has updated the 'opacity'
-      // and layout before the scroll starts.
       const timer = setTimeout(() => {
         invitationRef.current?.scrollIntoView({
           behavior: 'smooth',
           block: 'start',
         });
       }, 100);
-
       return () => clearTimeout(timer);
     }
   }, [showInvitation]);
@@ -99,6 +118,11 @@ const GuestPage = () => {
             isComing: tempComing,
             note: tempNote,
             lang: lang,
+            // Send the coming object as requested
+            coming: {
+                adults: tempComing ? tempAdults : 0,
+                under18: tempComing ? tempUnder18 : 0
+            }
           }),
           headers: { 'Content-Type': 'application/json' },
         },
@@ -124,13 +148,10 @@ const GuestPage = () => {
     <div className='container'>
       <section className='welcome-screen pad-20'>
         <h2 className='guest-greeting'>{guestName}!</h2>
-
         <h1>{data?.title}</h1>
         <h2>{data?.description}</h2>
         <h3>{data?.date}</h3>
-
         <p className='sub-text'>We'd love to know if you can join us.</p>
-
         <button
           className={ showInvitation ? 'start-btn hide' : 'start-btn show'}
           onClick={() => handleStart()}
@@ -143,7 +164,6 @@ const GuestPage = () => {
         ref={invitationRef}
         className={`invitation-details pad-20 ${showInvitation ? 'show-invitation' : 'hide-invitation'}`}
       >
-
         <InvitationDataUI lang={lang} />
 
         <RSVPForm
@@ -151,6 +171,13 @@ const GuestPage = () => {
           setTempComing={setTempComing}
           tempNote={tempNote}
           setTempNote={setTempNote}
+          // Pass new props to Form
+          tempAdults={tempAdults}
+          setTempAdults={setTempAdults}
+          tempUnder18={tempUnder18}
+          setTempUnder18={setTempUnder18}
+          maxAdults={maxAdults}
+          maxUnder18={maxUnder18}
           handleSubmit={handleSubmit}
           isSaving={isSaving}
           showError={showError}

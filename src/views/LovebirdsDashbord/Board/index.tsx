@@ -7,6 +7,8 @@ interface Guest {
   lang: 'en' | 'ru';
   isComing: boolean | null | undefined;
   note: string;
+  invited: { adults: number; under18: number };
+  coming?: { adults: number; under18: number };
 }
 
 const LovebirdsDashboard = () => {
@@ -15,18 +17,13 @@ const LovebirdsDashboard = () => {
   const [copiedId, setCopiedId] = useState<string | number | null>(null);
   const [updatingId, setUpdatingId] = useState<string | number | null>(null);
 
-  // --- New Filter State ---
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<
-    'all' | 'yes' | 'no' | 'none'
-  >('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'yes' | 'no' | 'none'>('all');
 
   useEffect(() => {
     const fetchGuests = async () => {
       try {
-        const response = await fetch(
-          'https://rjj5lzk50b.execute-api.us-east-1.amazonaws.com/prod/guests/',
-        );
+        const response = await fetch('https://rjj5lzk50b.execute-api.us-east-1.amazonaws.com/prod/guests/');
         const data = await response.json();
         setList(data);
       } catch (error) {
@@ -37,6 +34,17 @@ const LovebirdsDashboard = () => {
     };
     fetchGuests();
   }, []);
+
+  const totals = list.reduce(
+    (acc, guest) => {
+      if (guest.isComing) {
+        acc.adults += guest.coming?.adults || 0;
+        acc.under18 += guest.coming?.under18 || 0;
+      }
+      return acc;
+    },
+    { adults: 0, under18: 0 }
+  );
 
   const handleCopy = (id: string | number) => {
     const url = `https://www.georgyandedwine.com/${id}`;
@@ -51,174 +59,121 @@ const LovebirdsDashboard = () => {
     return "⏳ Didn't reply";
   };
 
-  // --- Filtering Logic ---
   const filteredList = list.filter((guest) => {
-    const matchesSearch = guest.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
+    const matchesSearch = guest.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === 'all' ||
       (statusFilter === 'yes' && guest.isComing === true) ||
       (statusFilter === 'no' && guest.isComing === false) ||
-      (statusFilter === 'none' &&
-        (guest.isComing === null || guest.isComing === undefined));
-
+      (statusFilter === 'none' && (guest.isComing === null || guest.isComing === undefined));
     return matchesSearch && matchesStatus;
   });
 
-  if (loading) return <div style={{ padding: '20px' }}>Loading...</div>;
-
   const toggleLanguage = async (guest: Guest, newLang: 'en' | 'ru') => {
     setUpdatingId(guest.id);
-
-    // Prepare the full object as required by your API
-    const updatedGuest = {
-      ...guest,
-      lang: newLang,
-    };
-
     try {
       const response = await fetch(
         `https://rjj5lzk50b.execute-api.us-east-1.amazonaws.com/prod/guests/${guest.id}`,
         {
           method: 'POST',
-          // Sending the full object instead of just { lang: newLang }
-          body: JSON.stringify(updatedGuest),
+          body: JSON.stringify({ ...guest, lang: newLang }),
           headers: { 'Content-Type': 'application/json' },
         },
       );
-
       if (response.ok) {
-        setList((prev) =>
-          prev.map((g) => (g.id === guest.id ? { ...g, lang: newLang } : g)),
-        );
-      } else {
-        console.error('Server responded with an error');
+        setList((prev) => prev.map((g) => (g.id === guest.id ? { ...g, lang: newLang } : g)));
       }
-    } catch (error) {
-      console.error('Update error:', error);
     } finally {
       setUpdatingId(null);
     }
   };
 
-  return (
-    <div
-      style={{
-        padding: '20px',
-        fontFamily: 'sans-serif',
-        maxWidth: '1200px',
-        margin: '0 auto',
-      }}
-    >
-      <h2 style={{ color: '#333' }}>🐦 Lovebirds Dashboard</h2>
+  if (loading) return <div className="dashboard-container">Loading...</div>;
 
-      {/* --- Filter Bar --- */}
-      <div style={filterBarStyle}>
+  return (
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <h2 className="dashboard-title">🐦 Lovebirds Dashboard</h2>
+        <div className="stats-badge">
+          Total Coming: <strong>{totals.adults + totals.under18}</strong> 
+          <span className="stats-breakdown">
+            ({totals.adults} Adults, {totals.under18} Under 18)
+          </span>
+        </div>
+      </div>
+
+      <div className="filter-bar">
         <input
-          type='text'
-          placeholder='Search by name...'
+          type="text"
+          placeholder="Search by name..."
+          className="search-input"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={inputStyle}
         />
 
         <select
+          className="status-select"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as any)}
-          style={selectStyle}
         >
-          <option value='all'>All Statuses</option>
-          <option value='yes'>✅ Coming</option>
-          <option value='no'>❌ Not Coming</option>
-          <option value='none'>⏳ Didn't Reply</option>
+          <option value="all">All Statuses</option>
+          <option value="yes">✅ Coming</option>
+          <option value="no">❌ Not Coming</option>
+          <option value="none">⏳ Didn't Reply</option>
         </select>
 
-        <div style={{ marginLeft: 'auto', color: '#888', fontSize: '14px' }}>
+        <div className="results-count">
           Showing {filteredList.length} of {list.length} guests
         </div>
       </div>
 
-      <table
-        style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}
-      >
+      <table className="guest-table">
         <thead>
-          <tr style={{ backgroundColor: '#f8f9fa', textAlign: 'left' }}>
-            <th style={cellStyle}>Guest Name</th>
-            <th style={cellStyle}>language</th>
-            <th style={cellStyle}>Coming?</th>
-            <th style={cellStyle}>Note</th>
-            <th style={cellStyle}>Actions</th>
+          <tr className="table-header">
+            <th className="cell">Guest Name</th>
+            <th className="cell">Language</th>
+            <th className="cell">Coming?</th>
+            <th className="cell cell-center">Adults</th>
+            <th className="cell cell-center">Under 18</th>
+            <th className="cell">Note</th>
+            <th className="cell">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredList.map((guest) => (
-            <tr key={guest.id} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={{ ...cellStyle, fontWeight: 'bold' }}>{guest.name}</td>
-              <td style={cellStyle}>
-                <div style={radioGroupStyle}>
+            <tr key={guest.id}>
+              <td className="cell cell-name">{guest.name}</td>
+              <td className="cell">
+                <div className="radio-group">
                   <button
-                    onClick={() =>
-                      guest.lang !== 'en' && toggleLanguage(guest, 'en')
-                    }
+                    onClick={() => guest.lang !== 'en' && toggleLanguage(guest, 'en')}
                     disabled={updatingId === guest.id}
-                    style={{
-                      ...radioButtonStyle,
-                      backgroundColor: guest.lang === 'en' ? '#b2313d' : '#fff',
-                      color: guest.lang === 'en' ? '#fff' : '#333',
-                      borderRight: 'none',
-                      borderRadius: '6px 0 0 6px',
-                    }}
-                  >
-                    EN
-                  </button>
+                    className={`radio-btn radio-btn-left ${guest.lang === 'en' ? 'active' : ''}`}
+                  >EN</button>
                   <button
-                    onClick={() =>
-                      guest.lang !== 'ru' && toggleLanguage(guest, 'ru')
-                    }
+                    onClick={() => guest.lang !== 'ru' && toggleLanguage(guest, 'ru')}
                     disabled={updatingId === guest.id}
-                    style={{
-                      ...radioButtonStyle,
-                      backgroundColor: guest.lang === 'ru' ? '#b2313d' : '#fff',
-                      color: guest.lang === 'ru' ? '#fff' : '#333',
-                      borderRadius: '0 6px 6px 0',
-                    }}
-                  >
-                    RU
-                  </button>
+                    className={`radio-btn radio-btn-right ${guest.lang === 'ru' ? 'active' : ''}`}
+                  >RU</button>
                 </div>
               </td>
-              <td style={cellStyle}>{getStatus(guest.isComing)}</td>
-              <td
-                style={{
-                  ...cellStyle,
-                  color: '#666',
-                  maxWidth: '300px',
-                  fontSize: '14px',
-                }}
-              >
-                {guest.note || (
-                  <span style={{ opacity: 0.5 }}>No note provided</span>
-                )}
+              <td className="cell">{getStatus(guest.isComing)}</td>
+              <td className="cell cell-center">
+                {guest.isComing ? (guest.coming?.adults || 0) : '-'}
               </td>
-              <td style={cellStyle}>
-                <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
-                >
-                  <button
-                    onClick={() => handleCopy(guest.id)}
-                    style={copyButtonStyle}
-                  >
+              <td className="cell cell-center">
+                {guest.isComing ? (guest.coming?.under18 || 0) : '-'}
+              </td>
+              <td className="cell cell-note">
+                {guest.note || <span className="note-placeholder">No note</span>}
+              </td>
+              <td className="cell">
+                <div className="actions-cell">
+                  <button onClick={() => handleCopy(guest.id)} className="copy-btn">
                     {copiedId === guest.id ? '✅' : '📋'}
                   </button>
-                  <a
-                    href={`https://www.georgyandedwine.com/${guest.id}`}
-                    target='_blank'
-                    rel='noreferrer'
-                    style={linkStyle}
-                  >
-                    Open Page
+                  <a href={`https://www.georgyandedwine.com/${guest.id}`} target="_blank" rel="noreferrer" className="open-link">
+                    Open
                   </a>
                 </div>
               </td>
@@ -228,82 +183,12 @@ const LovebirdsDashboard = () => {
       </table>
 
       {filteredList.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+        <div className="empty-state">
           No guests found matching your filters.
         </div>
       )}
     </div>
   );
-};
-
-// --- Styles ---
-const cellStyle: React.CSSProperties = {
-  padding: '12px 15px',
-  borderBottom: '1px solid #ddd',
-};
-
-const filterBarStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '15px',
-  marginBottom: '20px',
-  alignItems: 'center',
-  backgroundColor: '#fff',
-  padding: '15px',
-  borderRadius: '8px',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-};
-
-const radioGroupStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-};
-
-const radioButtonStyle: React.CSSProperties = {
-  padding: '6px 12px',
-  fontSize: '11px',
-  fontWeight: 'bold',
-  border: '1px solid #ddd',
-  cursor: 'pointer',
-  transition: 'all 0.2s ease',
-  minWidth: '45px',
-  outline: 'none',
-};
-
-const inputStyle: React.CSSProperties = {
-  padding: '10px',
-  borderRadius: '6px',
-  border: '1px solid #ddd',
-  width: '250px',
-  fontSize: '14px',
-};
-
-const selectStyle: React.CSSProperties = {
-  padding: '10px',
-  borderRadius: '6px',
-  border: '1px solid #ddd',
-  backgroundColor: '#fff',
-  fontSize: '14px',
-  cursor: 'pointer',
-};
-
-const copyButtonStyle: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #ddd',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  padding: '5px 10px',
-  fontSize: '18px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-};
-
-const linkStyle: React.CSSProperties = {
-  fontSize: '12px',
-  color: '#007bff',
-  textDecoration: 'none',
-  fontWeight: 'bold',
 };
 
 export default LovebirdsDashboard;

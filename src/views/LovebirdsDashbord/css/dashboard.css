@@ -5,4 +5,171 @@
   align-items: center;
   flex-direction: column;
   background: #fff;
+  padding: 40px 0;
+}
+
+.dashboard-container {
+  padding: 20px;
+  font-family: sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.dashboard-title {
+  color: #333;
+}
+
+.stats-badge {
+  background-color: #fdf2f2;
+  color: #b2313d;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 15px;
+  border: 1px solid #f9d5d5;
+  align-self: center;
+}
+
+.stats-breakdown {
+  font-size: 12px;
+  margin-left: 10px;
+  font-weight: normal;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  align-items: center;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  width: 250px;
+  font-size: 14px;
+}
+
+.status-select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.results-count {
+  margin-left: auto;
+  color: #888;
+  font-size: 14px;
+}
+
+.guest-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.table-header {
+  background-color: #f8f9fa;
+  text-align: left;
+}
+
+.cell {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.cell-name {
+  font-weight: bold;
+}
+
+.cell-center {
+  text-align: center;
+}
+
+.cell-note {
+  color: #666;
+  max-width: 250px;
+  font-size: 13px;
+}
+
+.note-placeholder {
+  opacity: 0.5;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+}
+
+.radio-btn {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 45px;
+  outline: none;
+  background-color: #fff;
+  color: #333;
+}
+
+.radio-btn.active {
+  background-color: #b2313d;
+  color: #fff;
+}
+
+.radio-btn-left {
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+}
+
+.radio-btn-right {
+  border-radius: 0 6px 6px 0;
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.copy-btn {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.open-link {
+  font-size: 12px;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #999;
 }

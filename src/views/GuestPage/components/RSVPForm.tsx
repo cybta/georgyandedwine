@@ -5,6 +5,12 @@ interface RSVPFormProps {
   setTempComing: (val: boolean) => void;
   tempNote: string;
   setTempNote: (val: string) => void;
+  tempAdults: number;
+  setTempAdults: (val: number) => void;
+  tempUnder18: number;
+  setTempUnder18: (val: number) => void;
+  maxAdults: number;
+  maxUnder18: number;
   handleSubmit: () => void;
   isSaving: boolean;
   showError: boolean;
@@ -18,13 +24,31 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
   setTempComing,
   tempNote,
   setTempNote,
+  tempAdults,
+  setTempAdults,
+  tempUnder18,
+  setTempUnder18,
+  maxAdults,
+  maxUnder18,
   handleSubmit,
   isSaving,
   showError,
   setShowError,
   success,
-  isFormValid,
 }) => {
+  
+  // 1. Logic: Form is valid if:
+  // - They said No
+  // - OR they said Yes AND at least one person (adult or child) is selected
+  const isActuallyValid = 
+    tempComing === false || 
+    (tempComing === true && (tempAdults + tempUnder18) > 0);
+
+  // Helper to generate array for dropdown options
+  // For adults, if attending, we start the range from 1 to avoid "Yes" with 0 guests.
+  const createOptions = (min: number, max: number) => 
+    Array.from({ length: max - min + 1 }, (_, i) => i + min);
+
   return (
     <div className='rsvp-card'>
       <div style={{ marginBottom: '30px' }}>
@@ -43,6 +67,8 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
             onClick={() => {
               setTempComing(true);
               setShowError(false);
+              // If they click Yes and it's currently 0, default to 1 adult
+              if (tempAdults === 0) setTempAdults(1);
             }}
             className={`toggle-button ${tempComing === true ? 'active-yes' : ''} ${showError ? 'error-border' : ''}`}
           >
@@ -52,6 +78,9 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
             onClick={() => {
               setTempComing(false);
               setShowError(false);
+              // Set counts to 0 and they will be hidden
+              setTempAdults(0);
+              setTempUnder18(0);
             }}
             className={`toggle-button ${tempComing === false ? 'active-no' : ''} ${showError ? 'error-border' : ''}`}
           >
@@ -59,6 +88,41 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Conditional Rendering: Only show guest counts if "Coming" is true */}
+      {tempComing === true && (
+        <div className="guest-selection-container" style={{ marginBottom: '20px', display: 'flex', gap: '20px', justifyContent: 'center' }}>
+          <div className="dropdown-field">
+            <label className="input-label">Adults</label>
+            <select 
+              value={tempAdults} 
+              onChange={(e) => setTempAdults(Number(e.target.value))}
+              className="guest-dropdown"
+            >
+              {/* If coming, Adults must be at least 1 (unless they are only bringing children) */}
+              {/* Usually, at least 1 adult is required for an RSVP group */}
+              {createOptions(1, maxAdults).map(num => (
+                <option key={num} value={num}>{num}</option>
+              ))}
+            </select>
+          </div>
+
+          {maxUnder18 > 0 && (
+            <div className="dropdown-field">
+              <label className="input-label">Under 18</label>
+              <select 
+                value={tempUnder18} 
+                onChange={(e) => setTempUnder18(Number(e.target.value))}
+                className="guest-dropdown"
+              >
+                {createOptions(0, maxUnder18).map(num => (
+                  <option key={num} value={num}>{num}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+      )}
 
       <div style={{ textAlign: 'left' }}>
         <label className='input-label'>Say something for the couple:</label>
@@ -72,7 +136,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
 
       <button
         onClick={handleSubmit}
-        disabled={!isFormValid || isSaving}
+        disabled={!isActuallyValid || isSaving}
         className={`submit-btn ${isSaving ? 'saving' : ''}`}
       >
         {isSaving ? 'Saving...' : 'Submit My RSVP'}
