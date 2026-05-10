@@ -126,7 +126,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
       )}
 
       <div style={{ textAlign: 'left' }}>
-        <label className='input-label'>Say something for the couple:</label>
+        <label className='input-label'>A message for the Bride & Groom:</label>
         <textarea
           className='note-textarea'
           value={tempNote}

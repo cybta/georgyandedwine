@@ -1,7 +1,7 @@
 .invitation-container {
   max-width: 600px;
-  margin: 40px auto;
-  padding: 30px;
+  margin: 0 auto 40px;
+  padding: 20px;
   background-color: #fffaf5; /* Soft off-white */
   border: 1px solid #eee;
   text-align: center;
@@ -33,7 +33,6 @@
 .main-date {
   font-size: 1.2rem;
   letter-spacing: 2px;
-  text-transform: uppercase;
   border-top: 1px solid #B89058;
   border-bottom: 1px solid #B89058;
   display: inline-block;
@@ -60,10 +59,11 @@
 
 .families {
   display: flex;
-  flex-content: space-between;
+  justify-content: space-between;
   font-weight: bold;
   margin: 15px 0;
-  font-size: 1.2rem
+  font-size: 1.3rem;
+  gap: 20px;
 }
 
 .families > div{
@@ -105,4 +105,23 @@
   font-style: italic;
   max-width: 80%;
   margin: 0 auto 15px;
+}
+
+@media (max-width: 380px) {
+  .families {
+    font-size: 1.1rem;
+  }
+}
+
+
+@media (max-width: 380px) {
+  .families {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 338px) {
+  .families {
+    font-size: 0.9rem;
+  }
 }

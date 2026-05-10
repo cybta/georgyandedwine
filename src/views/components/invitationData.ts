@@ -41,7 +41,7 @@ const englisData: InvitationData = {
   edwineFamily: 'Nazih & Lydia Saad',
   invitationText: 'Request the honor of your presence at the wedding of',
   names: 'Georgy & Edwine',
-  date: '25.July.2026',
+  date: 'Saturday, July 25, 2026',
   celebration: {
     churchData: {
       title: 'The Ceremony',

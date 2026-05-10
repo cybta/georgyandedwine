@@ -54,6 +54,27 @@ const GuestPage = () => {
   const [data, setData] = useState<MainData>();
 
   useEffect(() => {
+    if (!loading) { // Only run logic if loading is finished
+      if (!showInvitation) {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        document.body.style.height = '100dvh';
+        window.scrollTo(0, 0);
+      } else {
+        document.documentElement.style.overflow = 'auto';
+        document.body.style.overflow = 'auto';
+        document.body.style.height = 'auto';
+      }
+    }
+    
+    // Clean up function to ensure scroll is restored if component unmounts
+    return () => {
+      document.documentElement.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
+    };
+  }, [showInvitation, loading]);
+
+  useEffect(() => {
     const fetchGuestData = async () => {
       try {
         const response = await fetch(
@@ -142,7 +163,7 @@ const GuestPage = () => {
   if (loading) return <div className='container'>Loading invitation...</div>;
 
   return (
-    <div className='container'>
+    <div className={`container ${!showInvitation ? 'no-scroll' : ''}`}>
       <section className='welcome-screen pad-20'>
         <h1 className='namesGEmain'>{data?.title}</h1>
         <h3>{data?.date}</h3>
