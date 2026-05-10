@@ -50,7 +50,6 @@ const GuestPage = () => {
   const [maxAdults, setMaxAdults] = useState<number>(0);
   const [maxUnder18, setMaxUnder18] = useState<number>(0);
 
-  const [guestName, setGuestName] = useState('');
   const [lang, setLang] = useState<'en' | 'ru'>('en');
   const [data, setData] = useState<MainData>();
 
@@ -64,7 +63,6 @@ const GuestPage = () => {
         const foundGuest = result.find((g) => String(g.id) === id);
 
         if (foundGuest) {
-          setGuestName(foundGuest.name);
           setTempComing(foundGuest.isComing);
           setTempNote(foundGuest.note || '');
           setLang(foundGuest.lang || 'en');
@@ -142,16 +140,12 @@ const GuestPage = () => {
   };
 
   if (loading) return <div className='container'>Loading invitation...</div>;
-  if (!guestName) return <div className='container'>Invitation not found.</div>;
 
   return (
     <div className='container'>
       <section className='welcome-screen pad-20'>
-        <h2 className='guest-greeting'>{guestName}!</h2>
-        <h1>{data?.title}</h1>
-        <h2>{data?.description}</h2>
+        <h1 className='namesGEmain'>{data?.title}</h1>
         <h3>{data?.date}</h3>
-        <p className='sub-text'>We'd love to know if you can join us.</p>
         <button
           className={ showInvitation ? 'start-btn hide' : 'start-btn show'}
           onClick={() => handleStart()}

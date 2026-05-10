@@ -1,4 +1,4 @@
-const geIcon = (fill: string) => {
+const GEIcon = (fill: string) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -17,4 +17,4 @@ const geIcon = (fill: string) => {
   );
 };
 
-export default geIcon;
+export default GEIcon;

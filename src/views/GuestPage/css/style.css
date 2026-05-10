@@ -1,3 +1,17 @@
+@font-face {
+  font-family: 'BrittanySignature';
+  src: url('../../../assets/font/BrittanySignature.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+h1.namesGEmain {
+  font-family: 'BrittanySignature', cursive;
+  text-transform: none;
+  color: #fff;
+  font-size: 3.5em;
+}
+
 /* Container and Layout */
 .container {
   display: flex;

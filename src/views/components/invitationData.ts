@@ -10,13 +10,14 @@ export type InvitationData = {
   names: string;
   date: string;
   celebration: {
-    title: string;
-    restaurantData: {
+    churchData: {
+      title: string;
       time: string;
       location: string;
       map: string;
     };
-    churchData: {
+    restaurantData: {
+      title: string;
       time: string;
       location: string;
       map: string;
@@ -28,6 +29,7 @@ export type InvitationData = {
     gratitude: string;
     wishlistMsg: string;
     wishlistDetails: string;
+    reservationMsg: string;
   }
 };
 
@@ -43,23 +45,25 @@ const englisData: InvitationData = {
   names: 'Georgy & Edwine',
   date: '25.July.2026',
   celebration: {
-    title: 'The Celebration',
     churchData: {
-      time: '6:15 PM',
-      location: 'Restaurant Name',
-      map: 'locationmapHere'
+      title: 'The Ceremony',
+      time: '6:00 PM',
+      location: 'St.Georges Church Bsalim',
+      map: 'https://maps.app.goo.gl/bhHam1LGiNJ7usCg9'
     },
     restaurantData: {
-      time: '6:15 PM',
-      location: 'Restaurant Name',
-      map: 'locationmapHere'
+      title: 'The Celebration',
+      time: '8:30 PM',
+      location: 'Cielo Verde Ghazir',
+      map: 'https://maps.app.goo.gl/41HfYHhMgVz6GR5g8'
     }
   },
   gift: {
-    title: 'Gift Registry',
+    title: 'Wedding Registry',
     gratitude: 'Your love, laughter and presence are all we could wish for on our special day.',
     wishlistMsg: 'For those who wish, a wedding registry is available at',
     wishlistDetails: 'WHISHLIST HERE',
+    reservationMsg: 'Kindly confirm your presence Before July 1st.'
   }
 }
 
@@ -75,16 +79,17 @@ const russianData: InvitationData = {
   names: 'Георгий и Эдвин',
   date: '25 июля 2026',
   celebration: {
-    title: 'Торжество',
     churchData: {
-      time: '18:15',
-      location: 'Название ресторана',
-      map: 'locationmapHere'
+      title: 'Церемонии',
+      time: '18:00',
+      location: 'St.Georges Church Bsalim',
+      map: 'https://maps.app.goo.gl/bhHam1LGiNJ7usCg9'
     },
     restaurantData: {
-      time: '18:15',
-      location: 'Название ресторана',
-      map: 'locationmapHere'
+      title: 'Празднование',
+      time: '20:30',
+      location: 'Cielo Verde Ghazir',
+      map: 'https://maps.app.goo.gl/41HfYHhMgVz6GR5g8'
     }
   },
   gift: {
@@ -92,6 +97,7 @@ const russianData: InvitationData = {
     gratitude: 'Ваша любовь, смех и присутствие — это всё, о чем мы могли бы мечтать в наш особенный день.',
     wishlistMsg: 'Для тех, кто желает сделать подарок, наш список пожеланий доступен по ссылке:',
     wishlistDetails: 'WISHLIST HERE',
+    reservationMsg: 'Kindly confirm your presence Before July 1st.'
   }
 }
 
