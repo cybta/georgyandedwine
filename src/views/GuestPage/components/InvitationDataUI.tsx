@@ -4,8 +4,35 @@ import mainData from '../../components/invitationData';
 import '../css/invitationDataUI.css';
 import { ChurchIcon, RestaurantIcon } from '../../../assets/icons';
 
-const InvitationDataUI = ({ lang = 'en' }: { lang: 'en' | 'ru' }) => {
+const filterID : string[] = [
+  "84102", // baba mama
+  "19283", // Aimee
+  "55021", // Charo
+  "92710", // hamo,
+  "44829", // Misho
+  "20391", // Racha
+  "67123", // Nasr 
+  "88321", // Toni Roro 
+  "37261", // Elie 
+  "50482", // Zouzou 
+  "77218", // Anthony Asmar 
+  "83921", // Eliana 
+  "30429", // Natalia 
+  "75104", // Dmitri Bikhanov 
+  "14293", // Dmitri Mitin 
+  "68201", // Nicolai 
+  "00000", // Chekralla 
+]
+
+// Update the interface/type at the top
+interface InvitationDataUIProps {
+  lang: 'en' | 'ru';
+  id?: string; // Add id here
+}
+
+const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
   const data = mainData(lang);
+  const isSpecialGuest = id ? filterID.includes(id) : false;
 
   if (!data) return null;
 
@@ -61,7 +88,7 @@ const InvitationDataUI = ({ lang = 'en' }: { lang: 'en' | 'ru' }) => {
       {/* Intro & Families */}
       <motion.section variants={fadeInUpVariants} className="section intro-section">
         <p className="intro-text">{data.intro}</p>
-        <div className="families">
+        <div className={`families ${lang === 'ru' ? 'ru' : ''}`}>
           <div>{data.georgyFamily}</div>
           <div>{data.edwineFamily}</div>
         </div>
@@ -70,7 +97,7 @@ const InvitationDataUI = ({ lang = 'en' }: { lang: 'en' | 'ru' }) => {
 
       {/* Main Event */}
       <motion.section variants={fadeInUpVariants} className="section main-details">
-        <h1 className="main-names">{data.names}</h1>
+        <h1 className={`main-names ${lang === 'ru' ? 'ru' : ''}`}>{data.names}</h1>
         <h2 className="main-date">{data.date}</h2>
       </motion.section>
 
@@ -116,13 +143,19 @@ const InvitationDataUI = ({ lang = 'en' }: { lang: 'en' | 'ru' }) => {
       <motion.div variants={fadeInUpVariants} className="divider">✦</motion.div>
 
       {/* Gift Registry */}
-      <motion.section variants={fadeInUpVariants} className="section gift-section">
-        <h3 className="section-title">{data.gift.title}</h3>
-        <p className="wishlist-msg">{data.gift.wishlistMsg}</p>
-        <a href="#" className="wishlist-btn" target="_blank" rel="noreferrer">
-          {data.gift.wishlistDetails}
-        </a>
-      </motion.section>
+      {!isSpecialGuest && (
+        <motion.section 
+          variants={fadeInUpVariants} 
+          className="section gift-section"
+        >
+          <h3 className="section-title">{data.gift.title}</h3>
+          <p className="wishlist-msg">{data.gift.wishlistMsg}</p>
+          <a href="#" className="wishlist-btn" target="_blank" rel="noreferrer">
+            {data.gift.wishlistDetails}
+          </a>
+        </motion.section>
+      )}
+      
     </motion.div>
   );
 };

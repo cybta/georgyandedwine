@@ -1,7 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Upright:wght@300;400;500;600;700&family=Great+Vibes&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Cormorant Upright", serif;
   line-height: 1.5;
   font-weight: 400;
+  font-size: 18px;
+  font-weight: bold;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);

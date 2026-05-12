@@ -16,7 +16,6 @@ const Index = () => {
   return (
     <div className='homepage welcome-screen'>
       <h1>{data?.title}</h1>
-      <h2>{data?.description}</h2>
       <h3>{data?.date}</h3>
     </div>
   );

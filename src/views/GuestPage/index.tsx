@@ -194,7 +194,7 @@ const GuestPage = () => {
   return (
     <div className={`container ${!showInvitation ? 'no-scroll' : ''}`}>
       <section className='welcome-screen pad-20'>
-        <h1 className='namesGEmain'>{data?.title}</h1>
+        <h1 className={`namesGEmain ${lang === 'ru' ? 'ru' : ''}`}>{data?.title}</h1>
         <h3>{data?.date}</h3>
         <button
           className={ showInvitation ? 'start-btn hide' : 'start-btn show'}
@@ -208,7 +208,7 @@ const GuestPage = () => {
         ref={invitationRef}
         className={`invitation-details pad-20 ${showInvitation ? 'show-invitation' : 'hide-invitation'}`}
       >
-        <InvitationDataUI lang={lang} />
+        <InvitationDataUI lang={lang} id={id} />
 
         <RSVPForm
           tempComing={tempComing}

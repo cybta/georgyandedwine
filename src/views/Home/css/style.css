@@ -7,17 +7,16 @@
   flex-direction: column;
   padding-bottom: 70px;
   /* Updated Font Styles */
-  font-family: 'Georgia', serif;
   color: #B89058;
   font-size: 0.9em; /* Slightly increased for better readability with serif fonts */
 }
 
 h1 {
   margin: 0 0 10px 0;
+  font-family: 'BrittanySignature', cursive;
   font-weight: normal;
-  text-transform: uppercase;
   letter-spacing: 2px;
-  color: #B89058;
+  color: #fff;
   font-size: 35px;
 }
 
@@ -41,7 +40,6 @@ h2 {
   align-items: center;
   padding-bottom: 50px;
   /* Updated Font Styles */
-  font-family: 'Georgia', serif;
   color: #B89058;
   font-size: 0.8em;
   padding-bottom: 60px !important;
@@ -50,4 +48,8 @@ h2 {
 
 .welcome-screen p {
   letter-spacing: 1px;
+}
+
+.welcome-screen h3 {
+  font-size: 1.2rem;
 }

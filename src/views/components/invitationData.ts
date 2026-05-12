@@ -37,8 +37,8 @@ const englisData: InvitationData = {
     ref: 'Mark 10:9'
   },
   intro: 'With joyous hearts,',
-  georgyFamily: 'Oleg & Natalia Bykhanov',
-  edwineFamily: 'Nazih & Lydia Saad',
+  georgyFamily: 'Oleg & Natalia BYKHANOV',
+  edwineFamily: 'Nazih & Lydia SAAD',
   invitationText: 'Request the honor of your presence at the wedding of',
   names: 'Georgy & Edwine',
   date: 'Saturday, July 25, 2026',

@@ -9,7 +9,11 @@ h1.namesGEmain {
   font-family: 'BrittanySignature', cursive;
   text-transform: none;
   color: #fff;
-  font-size: 3.5em;
+  font-size: 3.1em;
+}
+
+h1.namesGEmain.ru {
+  font-family: "Great Vibes", cursive;
 }
 
 /* Container and Layout */
@@ -19,7 +23,6 @@ h1.namesGEmain {
   justify-content: center;
   align-items: center;
   width: 100%;
-  font-family: "Cormorant Upright", serif;
   box-sizing: border-box;
   color: #333;
 
@@ -39,10 +42,9 @@ h1.namesGEmain {
   color: #FFFFFF;
   border: 2px solid #B89058; /* Maintain border so size doesn't shift on hover */
   padding: 16px 32px;
-  font-family: 'Georgia', serif;
   text-transform: uppercase;
   letter-spacing: 2px;
-  font-size: 14px;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.4s ease; /* Smooth transition for background and text */
   border-radius: 4px;
@@ -82,7 +84,6 @@ h1.namesGEmain {
 /* Typography Overrides */
 .primary, .guest-greeting, .input-label {
   color: #B89058;
-  font-family: 'Georgia', serif;
 }
 
 .sub-text {
@@ -107,7 +108,6 @@ h1.namesGEmain {
   border-radius: 4px; /* Slightly sharper for a formal look */
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Georgia', serif;
   text-transform: uppercase;
   letter-spacing: 1px;
   flex: 1;
@@ -169,7 +169,6 @@ h1.namesGEmain {
   padding: 16px;
   border: 1px solid #B89058;
   border-radius: 4px;
-  font-family: 'Georgia', serif;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 14px;
