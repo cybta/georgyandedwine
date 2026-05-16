@@ -37,15 +37,12 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
   success,
 }) => {
   
-  // 1. Logic: Form is valid if:
-  // - They said No
-  // - OR they said Yes AND at least one person (adult or child) is selected
+  // Form is valid if text is typed AND they chose a status (and adults > 0 if they're coming)
+  const isMessageWritten = tempNote.trim().length > 0;
   const isActuallyValid = 
-    tempComing === false || 
-    (tempComing === true && (tempAdults + tempUnder18) > 0);
+    isMessageWritten && 
+    (tempComing === false || (tempComing === true && tempAdults > 0));
 
-  // Helper to generate array for dropdown options
-  // For adults, if attending, we start the range from 1 to avoid "Yes" with 0 guests.
   const createOptions = (min: number, max: number) => 
     Array.from({ length: max - min + 1 }, (_, i) => i + min);
 
@@ -59,7 +56,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
 
         {showError && (
           <p className='error-msg'>
-            Please select an option before submitting.
+            Please complete all required fields before submitting.
           </p>
         )}
 
@@ -68,7 +65,6 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
             onClick={() => {
               setTempComing(true);
               setShowError(false);
-              // If they click Yes and it's currently 0, default to 1 adult
               if (tempAdults === 0) setTempAdults(1);
             }}
             className={`toggle-button ${tempComing === true ? 'active-yes' : ''} ${showError ? 'error-border' : ''}`}
@@ -79,7 +75,6 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
             onClick={() => {
               setTempComing(false);
               setShowError(false);
-              // Set counts to 0 and they will be hidden
               setTempAdults(0);
               setTempUnder18(0);
             }}
@@ -90,7 +85,6 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
         </div>
       </div>
 
-      {/* Conditional Rendering: Only show guest counts if "Coming" is true */}
       {tempComing === true && (
         <div className="guest-selection-container" style={{ marginBottom: '20px', display: 'flex', gap: '20px', justifyContent: 'center' }}>
           <div className="dropdown-field">
@@ -100,8 +94,6 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
               onChange={(e) => setTempAdults(Number(e.target.value))}
               className="guest-dropdown"
             >
-              {/* If coming, Adults must be at least 1 (unless they are only bringing children) */}
-              {/* Usually, at least 1 adult is required for an RSVP group */}
               {createOptions(1, maxAdults).map(num => (
                 <option key={num} value={num}>{num}</option>
               ))}
@@ -126,12 +118,15 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
       )}
 
       <div style={{ textAlign: 'left' }}>
-        <label className='input-label'>Write a message for the Bride & Groom:</label>
+        <label className='input-label'>
+          Write a message for the Bride & Groom: <span style={{ color: '#b2313d' }}>*</span>
+        </label>
         <textarea
-          className='note-textarea'
+          className={`note-textarea ${showError && !isMessageWritten ? 'error-border' : ''}`}
           value={tempNote}
           onChange={(e) => setTempNote(e.target.value)}
-          placeholder='Your message here...'
+          placeholder='Your message here... (Required)'
+          required
         />
       </div>
 

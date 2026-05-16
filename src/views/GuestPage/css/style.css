@@ -157,6 +157,7 @@ h1.namesGEmain.ru {
   height: 120px;
   padding: 12px;
   border-radius: 4px;
+  font-size: 15px;
   border: 1px solid #B89058;
   font-family: inherit;
   resize: none;
@@ -164,6 +165,7 @@ h1.namesGEmain.ru {
   outline: none;
   margin-bottom: 30px;
   background-color: #fffaf5; /* Cream background */
+  color: inherit;
 }
 
 /* Submit Button */
