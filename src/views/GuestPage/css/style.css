@@ -85,6 +85,10 @@ h1.namesGEmain.ru {
   overflow: visible;
 }
 
+.reservation-text-top{
+  font-size: 21px;
+}
+
 /* Typography Overrides */
 .primary, .guest-greeting, .input-label {
   color: #B89058;

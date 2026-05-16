@@ -140,7 +140,7 @@ const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {lang === 'en' ? 'Start' : 'посмотреть карту'}
+              {lang === 'en' ? 'View Map' : 'посмотреть карту'}
             </a>
           </motion.div>
 

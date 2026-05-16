@@ -23,7 +23,7 @@ interface RSVPFormProps {
 // 🌐 Translation Dictionary
 const translations = {
   en: {
-    deadline: 'Kindly confirm your presence Before July the first.',
+    deadline: 'Kindly confirm your presence Before July 1.',
     question: 'Will you be attending?',
     errorMsg: 'Please complete all required fields before submitting.',
     btnYes: 'Yes, Of Course!',
@@ -86,7 +86,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
   return (
     <div className='rsvp-card'>
       <div style={{ marginBottom: '30px' }}>
-        <div>{t.deadline}</div>
+        <div className='reservation-text-top'>{t.deadline}</div>
         <p className='input-label' style={{ textAlign: 'center' }}>
           {t.question} <span style={{ color: '#b2313d' }}>*</span>
         </p>
