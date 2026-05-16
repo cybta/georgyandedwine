@@ -35,9 +35,13 @@ const LovebirdsDashboard = () => {
     fetchGuests();
   }, []);
 
+  // Helper check: True reply means note is not blank
+  const hasReplied = (guest: Guest) => guest.note && guest.note.trim() !== '';
+
+  // Calculate totals only from guests who have officially replied and are coming
   const totals = list.reduce(
     (acc, guest) => {
-      if (guest.isComing) {
+      if (hasReplied(guest) && guest.isComing === true) {
         acc.adults += guest.coming?.adults || 0;
         acc.under18 += guest.coming?.under18 || 0;
       }
@@ -53,19 +57,24 @@ const LovebirdsDashboard = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const getStatus = (coming: boolean | null | undefined) => {
-    if (coming === true) return '✅ Yes';
-    if (coming === false) return '❌ No';
-    return "⏳ Didn't reply";
+  // Fixed Status Decoder logic
+  const getStatus = (guest: Guest) => {
+    if (!hasReplied(guest)) return "⏳ Didn't reply";
+    if (guest.isComing === true) return '✅ Yes';
+    return '❌ No';
   };
 
+  // Fixed filter matching rules
   const filteredList = list.filter((guest) => {
     const matchesSearch = guest.name.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const replied = hasReplied(guest);
     const matchesStatus =
       statusFilter === 'all' ||
-      (statusFilter === 'yes' && guest.isComing === true) ||
-      (statusFilter === 'no' && guest.isComing === false) ||
-      (statusFilter === 'none' && (guest.isComing === null || guest.isComing === undefined));
+      (statusFilter === 'yes' && replied && guest.isComing === true) ||
+      (statusFilter === 'no' && replied && guest.isComing === false) ||
+      (statusFilter === 'none' && !replied);
+
     return matchesSearch && matchesStatus;
   });
 
@@ -140,45 +149,48 @@ const LovebirdsDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredList.map((guest) => (
-            <tr key={guest.id}>
-              <td className="cell cell-name">{guest.name}</td>
-              <td className="cell">
-                <div className="radio-group">
-                  <button
-                    onClick={() => guest.lang !== 'en' && toggleLanguage(guest, 'en')}
-                    disabled={updatingId === guest.id}
-                    className={`radio-btn radio-btn-left ${guest.lang === 'en' ? 'active' : ''}`}
-                  >EN</button>
-                  <button
-                    onClick={() => guest.lang !== 'ru' && toggleLanguage(guest, 'ru')}
-                    disabled={updatingId === guest.id}
-                    className={`radio-btn radio-btn-right ${guest.lang === 'ru' ? 'active' : ''}`}
-                  >RU</button>
-                </div>
-              </td>
-              <td className="cell">{getStatus(guest.isComing)}</td>
-              <td className="cell cell-center">
-                {guest.isComing ? (guest.coming?.adults || 0) : '-'}
-              </td>
-              <td className="cell cell-center">
-                {guest.isComing ? (guest.coming?.under18 || 0) : '-'}
-              </td>
-              <td className="cell cell-note">
-                {guest.note || <span className="note-placeholder">No note</span>}
-              </td>
-              <td className="cell">
-                <div className="actions-cell">
-                  <button onClick={() => handleCopy(guest.id)} className="copy-btn">
-                    {copiedId === guest.id ? '✅' : '📋'}
-                  </button>
-                  <a href={`https://www.georgyandedwine.com/${guest.id}`} target="_blank" rel="noreferrer" className="open-link">
-                    Open
-                  </a>
-                </div>
-              </td>
-            </tr>
-          ))}
+          {filteredList.map((guest) => {
+            const replied = hasReplied(guest);
+            return (
+              <tr key={guest.id}>
+                <td className="cell cell-name">{guest.name}</td>
+                <td className="cell">
+                  <div className="radio-group">
+                    <button
+                      onClick={() => guest.lang !== 'en' && toggleLanguage(guest, 'en')}
+                      disabled={updatingId === guest.id}
+                      className={`radio-btn radio-btn-left ${guest.lang === 'en' ? 'active' : ''}`}
+                    >EN</button>
+                    <button
+                      onClick={() => guest.lang !== 'ru' && toggleLanguage(guest, 'ru')}
+                      disabled={updatingId === guest.id}
+                      className={`radio-btn radio-btn-right ${guest.lang === 'ru' ? 'active' : ''}`}
+                    >RU</button>
+                  </div>
+                </td>
+                <td className="cell">{getStatus(guest)}</td>
+                <td className="cell cell-center">
+                  {replied && guest.isComing ? (guest.coming?.adults || 0) : '-'}
+                </td>
+                <td className="cell cell-center">
+                  {replied && guest.isComing ? (guest.coming?.under18 || 0) : '-'}
+                </td>
+                <td className="cell cell-note">
+                  {replied ? guest.note : <span className="note-placeholder" style={{ color: '#aaa', fontStyle: 'italic' }}>No reply yet</span>}
+                </td>
+                <td className="cell">
+                  <div className="actions-cell">
+                    <button onClick={() => handleCopy(guest.id)} className="copy-btn">
+                      {copiedId === guest.id ? '✅' : '📋'}
+                    </button>
+                    <a href={`https://www.georgyandedwine.com/${guest.id}`} target="_blank" rel="noreferrer" className="open-link">
+                      Open
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 

@@ -274,7 +274,7 @@ const GuestPage = () => {
               className={showInvitation ? 'start-btn hide' : 'start-btn show'}
               onClick={() => handleStart()}
             >
-              Start
+              {lang === 'en' ? 'Start' : 'Начинать'}
             </button>
           </motion.div>
         </motion.div>
@@ -303,6 +303,7 @@ const GuestPage = () => {
           setShowError={setShowError}
           success={success}
           isFormValid={tempComing !== null && tempComing !== undefined}
+          lang={lang}
         />
       </section>
     </div>
