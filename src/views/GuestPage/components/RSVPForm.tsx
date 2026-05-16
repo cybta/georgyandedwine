@@ -52,7 +52,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
   return (
     <div className='rsvp-card'>
       <div style={{ marginBottom: '30px' }}>
-        <div>Kindly confirm your presence Before July 1st.</div>
+        <div>Kindly confirm your presence Before July the first.</div>
         <p className='input-label' style={{ textAlign: 'center' }}>
           Will you be attending? <span style={{ color: '#b2313d' }}>*</span>
         </p>
@@ -73,7 +73,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
             }}
             className={`toggle-button ${tempComing === true ? 'active-yes' : ''} ${showError ? 'error-border' : ''}`}
           >
-            Yes, I'm Coming!
+            Yes, Of Course!
           </button>
           <button
             onClick={() => {
@@ -126,7 +126,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
       )}
 
       <div style={{ textAlign: 'left' }}>
-        <label className='input-label'>A message for the Bride & Groom:</label>
+        <label className='input-label'>Write a message for the Bride & Groom:</label>
         <textarea
           className='note-textarea'
           value={tempNote}

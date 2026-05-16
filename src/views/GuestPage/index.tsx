@@ -5,13 +5,15 @@ import mainData from '../components/mainData';
 import RSVPForm from './components/RSVPForm'; 
 import InvitationDataUI from './components/InvitationDataUI';
 
+import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
+
 interface Guest {
   id: string | number;
   name: string;
   isComing: boolean | null | undefined;
   lang: 'en' | 'ru';
   note: string;
-  // Added invited and coming structures
   invited: {
     adults: number;
     under18: number;
@@ -42,23 +44,20 @@ const GuestPage = () => {
   const [tempComing, setTempComing] = useState<boolean | null | undefined>(null);
   const [tempNote, setTempNote] = useState('');
   
-  // New States for counts
   const [tempAdults, setTempAdults] = useState<number>(0);
   const [tempUnder18, setTempUnder18] = useState<number>(0);
   
-  // State to store the limits from the "invited" object
   const [maxAdults, setMaxAdults] = useState<number>(0);
   const [maxUnder18, setMaxUnder18] = useState<number>(0);
 
   const [lang, setLang] = useState<'en' | 'ru'>('en');
   const [data, setData] = useState<MainData>();
 
-  // Inside GuestPage component
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false); // Optional: if you want to track play state
+  const [isPlaying, setIsPlaying] = useState(false); // Used to show Mute vs Unmute icons
 
   useEffect(() => {
-    if (!loading) { // Only run logic if loading is finished
+    if (!loading) { 
       if (!showInvitation) {
         document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
@@ -71,7 +70,6 @@ const GuestPage = () => {
       }
     }
     
-    // Clean up function to ensure scroll is restored if component unmounts
     return () => {
       document.documentElement.style.overflow = 'auto';
       document.body.style.overflow = 'auto';
@@ -92,11 +90,9 @@ const GuestPage = () => {
           setTempNote(foundGuest.note || '');
           setLang(foundGuest.lang || 'en');
           
-          // Set max limits from the fetched 'invited' data
           setMaxAdults(foundGuest.invited?.adults || 0);
           setMaxUnder18(foundGuest.invited?.under18 || 0);
 
-          // Set initial selection based on previous RSVP or default to max
           setTempAdults(foundGuest.coming?.adults ?? foundGuest.invited?.adults ?? 0);
           setTempUnder18(foundGuest.coming?.under18 ?? foundGuest.invited?.under18 ?? 0);
 
@@ -141,7 +137,6 @@ const GuestPage = () => {
             isComing: tempComing,
             note: tempNote,
             lang: lang,
-            // Send the coming object as requested
             coming: {
                 adults: tempComing ? tempAdults : 0,
                 under18: tempComing ? tempUnder18 : 0
@@ -161,47 +156,128 @@ const GuestPage = () => {
   };
 
   useEffect(() => {
-  // Create audio instance
-  audioRef.current = new Audio('/audio/bg-music.mp3');
-  audioRef.current.loop = true; // Optional: keeps the music playing
-  audioRef.current.volume = 0.3;
+    audioRef.current = new Audio('/audio/bg-music.mp3');
+    audioRef.current.loop = true; 
+    audioRef.current.volume = 0.3;
 
-  // Cleanup: Stop music if user leaves the page
-  return () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.25, 
+        delayChildren: 0.1,    
+      },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { 
+      opacity: 0, 
+      y: 30 
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        duration: 0.8, 
+        ease: "easeOut" 
+      }
     }
   };
-}, []);
 
   const handleStart = () => {
     setShowInvitation(true);
 
-    // Play the audio
     if (audioRef.current) {
-      audioRef.current.play().catch(error => {
-        console.error("Audio playback failed:", error);
-      });
-      setIsPlaying(true);
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true); // Explicitly update state on successful resolve
+        })
+        .catch(error => {
+          console.error("Audio playback failed:", error);
+          setIsPlaying(false);
+        });
     }
-
-    console.log('Invitation revealed, audio should play', isPlaying);
   };
 
-  if (loading) return <div className='container'>Loading invitation...</div>;
+  // New action to toggle play state cleanly
+  const toggleMute = () => {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play().catch(err => console.log(err));
+      setIsPlaying(true);
+    }
+  };
+
+  if (loading) return <div className='container white-col'>Loading invitation...</div>;
 
   return (
     <div className={`container ${!showInvitation ? 'no-scroll' : ''}`}>
-      <section className='welcome-screen pad-20'>
-        <h1 className={`namesGEmain ${lang === 'ru' ? 'ru' : ''}`}>{data?.title}</h1>
-        <h3>{data?.date}</h3>
-        <button
-          className={ showInvitation ? 'start-btn hide' : 'start-btn show'}
-          onClick={() => handleStart()}
+      
+      {/* 🎵 Floating Mute/Unmute Audio Control Button */}
+      {showInvitation && (
+        <button 
+          onClick={toggleMute}
+          className={`audio-toggle-btn ${isPlaying ? "mute-icon" : "unmute-icon"}`}
+          aria-label={isPlaying ? "Mute Background Music" : "Unmute Background Music"}
         >
-          Start
+          {isPlaying ? (
+            // Volume / Sound On Icon SVG
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          ) : (
+            // Mute / Sound Off Icon SVG
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+          )}
         </button>
+      )}
+
+      <section className='welcome-screen pad-20'>
+        <motion.div
+          className="intro-container" 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.h1 
+            variants={itemVariants}
+            className={`namesGEmain ${lang === 'ru' ? 'ru' : ''}`}
+          >
+            {data?.title}
+          </motion.h1>
+
+          <motion.h3 variants={itemVariants}>
+            {data?.date}
+          </motion.h3>
+
+          <motion.div variants={itemVariants}>
+            <button
+              className={showInvitation ? 'start-btn hide' : 'start-btn show'}
+              onClick={() => handleStart()}
+            >
+              Start
+            </button>
+          </motion.div>
+        </motion.div>
       </section>
 
       <section
@@ -215,7 +291,6 @@ const GuestPage = () => {
           setTempComing={setTempComing}
           tempNote={tempNote}
           setTempNote={setTempNote}
-          // Pass new props to Form
           tempAdults={tempAdults}
           setTempAdults={setTempAdults}
           tempUnder18={tempUnder18}

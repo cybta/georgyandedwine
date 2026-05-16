@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'BrittanySignature';
-  src: url('../../../assets/font/BrittanySignature.ttf') format('truetype');
+  src: url('/fonts/BrittanySignature.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
@@ -28,6 +28,10 @@ h1.namesGEmain.ru {
 
   min-height: 100dvh; /* Dynamic viewport height */
   transition: overflow 0.3s ease;
+}
+
+.white-col {
+  color: #fff;
 }
 
 /* 3. Locking logic */
@@ -145,7 +149,7 @@ h1.namesGEmain.ru {
 .input-label {
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .note-textarea {
@@ -216,9 +220,45 @@ h1.namesGEmain.ru {
   border: 1px solid #ccc;
   width: 100%;
   background: white;
+  color: inherit;
 }
+
 .dropdown-field {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+.audio-toggle-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999; /* Keeps it layered above all scrolling items */
+  transform: scale(0.95);
+  background-size: cover;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(4px); /* Modern frosted-glass effect */
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+  border: none !important;
+  outline: none !important;
+}
+
+.audio-toggle-btn:hover {
+  transform: scale(1.05);
+}
+
+.mute-icon {
+  background-image: url(/img/mute.png);
+}
+
+.unmute-icon {
+  background-image: url(/img/unmute.png);
 }

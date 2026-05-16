@@ -1,33 +1,19 @@
 import { motion } from 'framer-motion';
-import type { Variants } from 'framer-motion'; // Importing as a type
+import type { Variants } from 'framer-motion'; 
 import mainData from '../../components/invitationData';
 import '../css/invitationDataUI.css';
 import { ChurchIcon, RestaurantIcon } from '../../../assets/icons';
 
 const filterID : string[] = [
-  "84102", // baba mama
-  "19283", // Aimee
-  "55021", // Charo
-  "92710", // hamo,
-  "44829", // Misho
-  "20391", // Racha
-  "67123", // Nasr 
-  "88321", // Toni Roro 
-  "37261", // Elie 
-  "50482", // Zouzou 
-  "77218", // Anthony Asmar 
-  "83921", // Eliana 
-  "30429", // Natalia 
-  "75104", // Dmitri Bikhanov 
-  "14293", // Dmitri Mitin 
-  "68201", // Nicolai 
-  "00000", // Chekralla 
-]
+  "84102", "19283", "55021", "92710", "44829", 
+  "20391", "67123", "88321", "37261", "50482", 
+  "77218", "83921", "30429", "75104", "14293", 
+  "68201", "00000"
+];
 
-// Update the interface/type at the top
 interface InvitationDataUIProps {
   lang: 'en' | 'ru';
-  id?: string; // Add id here
+  id?: string; 
 }
 
 const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
@@ -41,19 +27,10 @@ const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
     return url.startsWith('http') ? url : `https://${url}`;
   };
 
-  // Macro Animation Variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2, // Elements pop in one after another
-      },
-    },
-  };
+  // 1. Unified viewport setting for reuse across sections
+  const viewConfig = { once: true, amount: 0.4 };
 
-
-  // 2. Add the : Variants type here
+  // 2. Kept your clean variant setup 
   const fadeInUpVariants: Variants = {
     hidden: { 
       opacity: 0, 
@@ -64,29 +41,54 @@ const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
       y: 0, 
       transition: { 
         duration: 0.8, 
-        ease: "easeOut" // Now TS knows this is a valid Easing literal
+        ease: "easeOut" 
       } 
     }
   };
 
+  // Optional: A small sequential stagger specifically for the internal celebration cards
+  const cardsContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2 }
+    }
+  };
+
   return (
-    <motion.div
-      className="invitation-container"
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.1 }} // Triggers once when 10% is visible
-    >
+    // Parent wrapper is now a standard div or clean motion tracking container
+    <div className="invitation-container">
+      
       {/* Quote Section */}
-      <motion.section variants={fadeInUpVariants} className="section quote-section">
+      <motion.section 
+        variants={fadeInUpVariants} 
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewConfig}
+        className="section quote-section"
+      >
         <p className="quote-text">"{data.quote.text}"</p>
         <p className="quote-ref">{data.quote.ref}</p>
       </motion.section>
 
-      <motion.div variants={fadeInUpVariants} className="divider">✦</motion.div>
+      <motion.div 
+        variants={fadeInUpVariants} 
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewConfig}
+        className="divider"
+      >
+        ✦
+      </motion.div>
 
       {/* Intro & Families */}
-      <motion.section variants={fadeInUpVariants} className="section intro-section">
+      <motion.section 
+        variants={fadeInUpVariants} 
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewConfig}
+        className="section intro-section"
+      >
         <p className="intro-text">{data.intro}</p>
         <div className={`families ${lang === 'ru' ? 'ru' : ''}`}>
           <div>{data.georgyFamily}</div>
@@ -96,15 +98,35 @@ const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
       </motion.section>
 
       {/* Main Event */}
-      <motion.section variants={fadeInUpVariants} className="section main-details">
+      <motion.section 
+        variants={fadeInUpVariants} 
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewConfig}
+        className="section main-details"
+      >
         <h1 className={`main-names ${lang === 'ru' ? 'ru' : ''}`}>{data.names}</h1>
         <h2 className="main-date">{data.date}</h2>
       </motion.section>
 
-      <motion.div variants={fadeInUpVariants} className="divider">✦</motion.div>
+      <motion.div 
+        variants={fadeInUpVariants} 
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewConfig}
+        className="divider"
+      >
+        ✦
+      </motion.div>
 
-      {/* Celebration Details */}
-      <motion.section variants={fadeInUpVariants} className="section celebration-section">
+      {/* Celebration Details — Animates container & staggers the 2 cards together */}
+      <motion.section 
+        variants={cardsContainerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewConfig}
+        className="section celebration-section"
+      >
         <div className="event-grid">
           {/* Church Card */}
           <motion.div variants={fadeInUpVariants} className="event-card">
@@ -140,12 +162,23 @@ const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
         </div>
       </motion.section>
 
-      <motion.div variants={fadeInUpVariants} className="divider">✦</motion.div>
+      <motion.div 
+        variants={fadeInUpVariants} 
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewConfig}
+        className="divider"
+      >
+        ✦
+      </motion.div>
 
       {/* Gift Registry */}
       {!isSpecialGuest && (
         <motion.section 
           variants={fadeInUpVariants} 
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewConfig}
           className="section gift-section"
         >
           <h3 className="section-title">{data.gift.title}</h3>
@@ -156,7 +189,7 @@ const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
         </motion.section>
       )}
       
-    </motion.div>
+    </div>
   );
 };
 
