@@ -1,6 +1,6 @@
 .dashboard {
   width: 100%;
-  min-width: 1200px;
+  max-width: 1200px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -105,6 +105,8 @@
   color: #666;
   max-width: 250px;
   font-size: 13px;
+  flex-direction: column;
+  align-items: start !important;
 }
 
 .note-placeholder {
