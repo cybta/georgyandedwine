@@ -7,7 +7,6 @@ type MainData = {
   date: string;
 };
 
-// Change 'index' to 'Index'
 const Index = () => {
   const lang =
     typeof window !== 'undefined' ? navigator.language.slice(0, 2) : 'en';

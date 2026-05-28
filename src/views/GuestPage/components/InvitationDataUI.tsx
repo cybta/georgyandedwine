@@ -7,8 +7,9 @@ import { ChurchIcon, RestaurantIcon } from '../../../assets/icons';
 const filterID : string[] = [
   "84102", "19283", "55021", "92710", "44829", 
   "20391", "67123", "88321", "37261", "50482", 
-  "77218", "83921", "30429", "75104", "14293", 
-  "68201", "00000"
+  "77218", "83921", "30429", "75104", "14293",
+  "14294", "14295", "14296", "14297", "68201",
+  "11504", "66142", "72931", "00000", 
 ];
 
 interface InvitationDataUIProps {
@@ -183,9 +184,9 @@ const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
         >
           <h3 className="section-title">{data.gift.title}</h3>
           <p className="wishlist-msg">{data.gift.wishlistMsg}</p>
-          <a href="#" className="wishlist-btn" target="_blank" rel="noreferrer">
+          <div className="wishlist-btn">
             {data.gift.wishlistDetails}
-          </a>
+          </div>
         </motion.section>
       )}
       

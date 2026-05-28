@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import './css/style.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import mainData from '../components/mainData';
 import RSVPForm from './components/RSVPForm'; 
 import InvitationDataUI from './components/InvitationDataUI';
@@ -32,6 +32,7 @@ type MainData = {
 
 const GuestPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -76,7 +77,7 @@ const GuestPage = () => {
     };
   }, [showInvitation, loading]);
 
-  useEffect(() => {
+useEffect(() => {
     const fetchGuestData = async () => {
       try {
         const response = await fetch(
@@ -89,7 +90,7 @@ const GuestPage = () => {
           setTempComing(foundGuest.isComing);
           setTempNote(foundGuest.note || '');
           setLang(foundGuest.lang || 'en');
-          
+         
           setMaxAdults(foundGuest.invited?.adults || 0);
           setMaxUnder18(foundGuest.invited?.under18 || 0);
 
@@ -98,15 +99,20 @@ const GuestPage = () => {
 
           const getData: MainData | undefined = mainData(foundGuest.lang);
           setData(getData);
+        } else {
+          // 🔄 Redirect to main page if the ID doesn't exist in the fetched list
+          navigate('/', { replace: true });
         }
       } catch (error) {
         console.error('Error fetching guest:', error);
+        // Optional: redirect on fetch error as well
+        navigate('/', { replace: true });
       } finally {
         setLoading(false);
       }
     };
     if (id) fetchGuestData();
-  }, [id]);
+  }, [id, navigate]); // Add navigate to the dependency array
 
   useEffect(() => {
     if (showInvitation && invitationRef.current) {
@@ -274,7 +280,7 @@ const GuestPage = () => {
               className={showInvitation ? 'start-btn hide' : 'start-btn show'}
               onClick={() => handleStart()}
             >
-              {lang === 'en' ? 'Start' : 'Начинать'}
+              {lang === 'en' ? 'Start' : 'Начать'}
             </button>
           </motion.div>
         </motion.div>

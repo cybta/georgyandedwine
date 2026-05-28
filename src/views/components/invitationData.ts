@@ -58,8 +58,8 @@ const englisData: InvitationData = {
   },
   gift: {
     title: 'Wedding Registry',
-    wishlistMsg: 'For those who wish, a wedding registry is available at',
-    wishlistDetails: 'WHISHLIST HERE',
+    wishlistMsg: 'Registry is available at Whish Money',
+    wishlistDetails: '70 396 221',
   }
 }
 
@@ -72,11 +72,11 @@ const russianData: InvitationData = {
   georgyFamily: 'Олег и Наталья Быхановы',
   edwineFamily: 'Назих и Лидия Саад',
   invitationText: 'Просят почтить их присутствием на свадьбе своих сына и дочери',
-  names: 'Георгий и Эдвин',
+  names: 'Георгия и Эдвин',
   date: '25 июля 2026',
   celebration: {
     churchData: {
-      title: 'Церемонии',
+      title: 'Церемония',
       time: '18:00',
       location: 'St.Georges Church Bsalim',
       map: 'https://maps.app.goo.gl/bhHam1LGiNJ7usCg9'
