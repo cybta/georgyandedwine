@@ -69,7 +69,7 @@
 }
 
 .families.ru {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .families > div{
@@ -90,7 +90,7 @@
   font-size: 0.9rem;
 }
 
-.map-link, .wishlist-btn {
+.map-link {
   display: inline-block;
   margin-top: 10px;
   color: #B89058;
@@ -99,6 +99,19 @@
   border: 1px solid #B89058;
   padding: 5px 15px;
   transition: all 0.3s;
+}
+
+.gift-section .section-title {
+  margin: 0;
+}
+
+.wishlist-msg {
+  margin: 5px 0;
+}
+
+.wishlist-btn {
+  color: #B89058;
+  font-size: 1.2em;
 }
 
 .map-link:hover, .wishlist-btn:hover {
