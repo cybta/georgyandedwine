@@ -127,10 +127,18 @@
 }
 
 /* Mobile view (380px and below) */
-@media (max-width: 380px) {
+@media (max-width: 420px) {
   .families, 
   .families.ru {
     font-size: 1rem;
+  }
+}
+
+/* Mobile view (380px and below) */
+@media (max-width: 380px) {
+  .families, 
+  .families.ru {
+    font-size: .9rem;
   }
 }
 
