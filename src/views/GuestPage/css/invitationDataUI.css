@@ -76,6 +76,11 @@
   width: 50%;
 }
 
+.families.ru > div {
+  flex: 1 1 120px; 
+  min-width: 110px;
+}
+
 .event-grid {
   display: flex;
   flex-direction: column;
