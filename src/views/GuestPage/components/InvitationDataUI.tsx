@@ -82,7 +82,7 @@ const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
         ✦
       </motion.div>
 
-      {/* Intro & Families */}
+      {/* Intro & families-names */}
       <motion.section 
         variants={fadeInUpVariants} 
         initial="hidden"
@@ -91,7 +91,7 @@ const InvitationDataUI = ({ lang = 'en', id }: InvitationDataUIProps) => {
         className="section intro-section"
       >
         <p className="intro-text">{data.intro}</p>
-        <div className={`families ${lang === 'ru' ? 'ru' : ''}`}>
+        <div className={`families-names ${lang === 'ru' ? 'ru' : ''}`}>
           <div>{data.georgyFamily}</div>
           <div>{data.edwineFamily}</div>
         </div>

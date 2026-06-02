@@ -60,7 +60,7 @@
   font-size: 1.5rem;
 }
 
-.families {
+.families-names {
   display: flex;
   justify-content: space-between;
   font-weight: bold;
@@ -68,15 +68,15 @@
   gap: 20px;
 }
 
-.families.ru {
-  font-size: 1.1rem;
+.families-names.ru {
+  font-size: 1rem;
 }
 
-.families > div{
+.families-names > div{
   width: 50%;
 }
 
-.families.ru > div {
+.families-names.ru > div {
   flex: 1 1 120px; 
   min-width: 110px;
 }
@@ -133,24 +133,24 @@
 
 /* Mobile view (380px and below) */
 @media (max-width: 420px) {
-  .families, 
-  .families.ru {
-    font-size: 1rem;
+  .families-names, 
+  .families-names.ru {
+    font-size: 0.95rem;
   }
 }
 
 /* Mobile view (380px and below) */
 @media (max-width: 380px) {
-  .families, 
-  .families.ru {
+  .families-names, 
+  .families-names.ru {
     font-size: .9rem;
   }
 }
 
 /* Ultra-narrow mobile view (338px and below) */
 @media (max-width: 338px) {
-  .families, 
-  .families.ru {
+  .families-names, 
+  .families-names.ru {
     font-size: 0.75rem; /* Raised from 0.5rem so it remains legible */
   }
 }
