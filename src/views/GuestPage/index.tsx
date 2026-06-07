@@ -8,6 +8,7 @@ import InvitationDataUI from './components/InvitationDataUI';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 
+
 interface Guest {
   id: string | number;
   name: string;
@@ -90,15 +91,29 @@ useEffect(() => {
           setTempComing(foundGuest.isComing);
           setTempNote(foundGuest.note || '');
           setLang(foundGuest.lang || 'en');
-         
+          
           setMaxAdults(foundGuest.invited?.adults || 0);
           setMaxUnder18(foundGuest.invited?.under18 || 0);
 
           setTempAdults(foundGuest.coming?.adults ?? foundGuest.invited?.adults ?? 0);
           setTempUnder18(foundGuest.coming?.under18 ?? foundGuest.invited?.under18 ?? 0);
 
-          const getData: MainData | undefined = mainData(foundGuest.lang);
+          const guestLang = foundGuest.lang || 'en';
+          const getData: MainData | undefined = mainData(guestLang);
           setData(getData);
+
+          // 🛠️ DYNAMIC META TAG UPDATE LOGIC
+          const titleText = guestLang === 'ru' ? 'Георгий и Эдвин' : 'Georgy & Edwine';
+          const descText = guestLang === 'ru' 
+            ? 'Вы приглашены на свадьбу Георгия и Эдвин!' 
+            : "You are invited to Georgy & Edwine's wedding!";
+
+          // Update browser tab title
+          document.title = titleText;
+
+          // Locate and rewrite Open Graph tags dynamically
+          document.querySelector('meta[property="og:title"]')?.setAttribute('content', titleText);
+          document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
         } else {
           // 🔄 Redirect to main page if the ID doesn't exist in the fetched list
           navigate('/', { replace: true });
