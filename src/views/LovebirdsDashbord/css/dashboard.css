@@ -107,6 +107,11 @@
   font-size: 13px;
   flex-direction: column;
   align-items: start !important;
+  text-align: left;
+}
+
+td.cell-note{
+  text-align: left;
 }
 
 .note-placeholder {

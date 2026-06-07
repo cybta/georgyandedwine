@@ -45,8 +45,8 @@ const GuestPage = () => {
   const [tempComing, setTempComing] = useState<boolean | null | undefined>(null);
   const [tempNote, setTempNote] = useState('');
   
-  const [tempAdults, setTempAdults] = useState<number>(0);
-  const [tempUnder18, setTempUnder18] = useState<number>(0);
+  const [tempAdults, setTempAdults] = useState<number | ''>('');
+  const [tempUnder18, setTempUnder18] = useState<number | ''>('');
   
   const [maxAdults, setMaxAdults] = useState<number>(0);
   const [maxUnder18, setMaxUnder18] = useState<number>(0);

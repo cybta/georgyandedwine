@@ -208,6 +208,24 @@ h1.namesGEmain.ru {
   font-style: italic;
 }
 
+.error-msg-box {
+  background-color: #d9534f;
+  color: #fff;
+  border-radius: 3px;
+  padding: 10px 15px;
+  font-size: 13px;
+  margin: 15px 0;
+  font-style: italic;
+  display: inline-block;
+}
+
+.guest-dropdown.error-border,
+.guest-dropdown.error-border,
+.note-textarea.error-border {
+  border-color: #d9534f;
+  border-width: 2px;
+}
+
 .success-msg {
   margin-top: 20px;
   color: #B89058;

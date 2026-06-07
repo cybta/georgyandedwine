@@ -222,6 +222,10 @@
   border-radius: 8px;
 }
 
+.guest-table td.cell.cell-note {
+  text-align: left;
+}
+
 
 /* --- DESKTOP ADAPTATION MEDIA QUERY --- */
 @media (min-width: 768px) {

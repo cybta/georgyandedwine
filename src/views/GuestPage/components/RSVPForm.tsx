@@ -2,13 +2,13 @@ import React from 'react';
 
 interface RSVPFormProps {
   tempComing: boolean | null | undefined;
-  setTempComing: (val: boolean) => void;
+  setTempComing: (val: boolean | null) => void;
   tempNote: string;
   setTempNote: (val: string) => void;
-  tempAdults: number;
-  setTempAdults: (val: number) => void;
-  tempUnder18: number;
-  setTempUnder18: (val: number) => void;
+  tempAdults: number | '';
+  setTempAdults: (val: number | '') => void;
+  tempUnder18: number | '';
+  setTempUnder18: (val: number | '') => void;
   maxAdults: number;
   maxUnder18: number;
   handleSubmit: () => void;
@@ -16,7 +16,7 @@ interface RSVPFormProps {
   showError: boolean;
   setShowError: (val: boolean) => void;
   success: boolean;
-  isFormValid: boolean;
+  isFormValid: boolean; 
   lang: 'en' | 'ru';
 }
 
@@ -30,6 +30,7 @@ const translations = {
     btnNo: 'Regretfully, No',
     labelAdults: 'Adults',
     labelKids: 'Under 18',
+    selectPlaceholder: 'Select...',
     messageLabel: 'Write a message for the Bride & Groom:',
     placeholder: 'Your message here... (Required)',
     btnSubmit: 'Submit My RSVP',
@@ -44,6 +45,7 @@ const translations = {
     btnNo: 'К сожалению, нет',
     labelAdults: 'Взрослые',
     labelKids: 'До 18 лет',
+    selectPlaceholder: 'Выбрать...',
     messageLabel: 'Напишите пожелание или сообщение для жениха и невесты:',
     placeholder: 'Ваше сообщение здесь... (Обязательно)',
     btnSubmit: 'Отправить ответ',
@@ -74,14 +76,32 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
   // Guard fallback in case lang is missing or undefined
   const t = translations[lang] || translations.en;
 
-  // Form is valid if text is typed AND they chose a status (and adults > 0 if they're coming)
   const isMessageWritten = tempNote.trim().length > 0;
+  
+  // Validation checks for individual field status
+  const isAttendanceSelected = tempComing === true || tempComing === false;
+  const isAdultsSelected = tempComing === true ? (typeof tempAdults === 'number' && tempAdults > 0) : true;
+  const isKidsSelected = (tempComing === true && maxUnder18 > 0) ? (typeof tempUnder18 === 'number') : true;
+  
+  // The client-side validity check to block/allow final backend processing
   const isActuallyValid = 
     isMessageWritten && 
-    (tempComing === false || (tempComing === true && tempAdults > 0));
+    isAttendanceSelected && 
+    isAdultsSelected && 
+    isKidsSelected;
 
   const createOptions = (min: number, max: number) => 
     Array.from({ length: max - min + 1 }, (_, i) => i + min);
+
+  // Custom click handler to capture validation states properly before running submission logic
+  const onFormSubmitClick = () => {
+    if (!isActuallyValid) {
+      setShowError(true);
+    } else {
+      setShowError(false);
+      handleSubmit();
+    }
+  };
 
   return (
     <div className='rsvp-card'>
@@ -91,31 +111,32 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
           {t.question} <span style={{ color: '#b2313d' }}>*</span>
         </p>
 
-        {showError && (
-          <p className='error-msg'>
+        {showError && !isActuallyValid && (
+          <p className='error-msg-box'>
             {t.errorMsg}
           </p>
         )}
 
         <div className='button-group'>
           <button
+            type="button"
             onClick={() => {
               setTempComing(true);
-              setShowError(false);
-              if (tempAdults === 0) setTempAdults(1);
+              setTempAdults('');
+              setTempUnder18('');
             }}
-            className={`toggle-button ${tempComing === true ? 'active-yes' : ''} ${showError ? 'error-border' : ''}`}
+            className={`toggle-button ${tempComing === true ? 'active-yes' : ''} ${(showError && !isAttendanceSelected) ? 'error-border' : ''}`}
           >
             {t.btnYes}
           </button>
           <button
+            type="button"
             onClick={() => {
               setTempComing(false);
-              setShowError(false);
               setTempAdults(0);
               setTempUnder18(0);
             }}
-            className={`toggle-button ${tempComing === false ? 'active-no' : ''} ${showError ? 'error-border' : ''}`}
+            className={`toggle-button ${tempComing === false ? 'active-no' : ''} ${(showError && !isAttendanceSelected) ? 'error-border' : ''}`}
           >
             {t.btnNo}
           </button>
@@ -125,12 +146,13 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
       {tempComing === true && (
         <div className="guest-selection-container" style={{ marginBottom: '20px', display: 'flex', gap: '20px', justifyContent: 'center' }}>
           <div className="dropdown-field">
-            <label className="input-label">{t.labelAdults}</label>
+            <label className="input-label">{t.labelAdults} <span style={{ color: '#b2313d' }}>*</span></label>
             <select 
               value={tempAdults} 
-              onChange={(e) => setTempAdults(Number(e.target.value))}
-              className="guest-dropdown"
+              onChange={(e) => setTempAdults(e.target.value === '' ? '' : Number(e.target.value))}
+              className={`guest-dropdown ${showError && !isAdultsSelected ? 'error-border' : ''}`}
             >
+              <option value="">{t.selectPlaceholder}</option>
               {createOptions(1, maxAdults).map(num => (
                 <option key={num} value={num}>{num}</option>
               ))}
@@ -139,12 +161,13 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
 
           {maxUnder18 > 0 && (
             <div className="dropdown-field">
-              <label className="input-label">{t.labelKids}</label>
+              <label className="input-label">{t.labelKids} <span style={{ color: '#b2313d' }}>*</span></label>
               <select 
                 value={tempUnder18} 
-                onChange={(e) => setTempUnder18(Number(e.target.value))}
-                className="guest-dropdown"
+                onChange={(e) => setTempUnder18(e.target.value === '' ? '' : Number(e.target.value))}
+                className={`guest-dropdown ${showError && !isKidsSelected ? 'error-border' : ''}`}
               >
+                <option value="">{t.selectPlaceholder}</option>
                 {createOptions(0, maxUnder18).map(num => (
                   <option key={num} value={num}>{num}</option>
                 ))}
@@ -168,8 +191,8 @@ const RSVPForm: React.FC<RSVPFormProps> = ({
       </div>
 
       <button
-        onClick={handleSubmit}
-        disabled={!isActuallyValid || isSaving}
+        onClick={onFormSubmitClick}
+        disabled={isSaving}
         className={`submit-btn ${isSaving ? 'saving' : ''}`}
       >
         {isSaving ? t.btnSaving : t.btnSubmit}
