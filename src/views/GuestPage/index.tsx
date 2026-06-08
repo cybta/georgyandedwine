@@ -8,6 +8,8 @@ import InvitationDataUI from './components/InvitationDataUI';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 
+// Vite imports this asset and compiles a unique path version for deployment
+import weddingMusic from '../assets/bg-music.mp3';
 
 interface Guest {
   id: string | number;
@@ -56,7 +58,7 @@ const GuestPage = () => {
   const [data, setData] = useState<MainData>();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false); // Used to show Mute vs Unmute icons
+  const [isPlaying, setIsPlaying] = useState(false); 
 
   useEffect(() => {
     if (!loading) { 
@@ -78,7 +80,7 @@ const GuestPage = () => {
     };
   }, [showInvitation, loading]);
 
-useEffect(() => {
+  useEffect(() => {
     const fetchGuestData = async () => {
       try {
         const response = await fetch(
@@ -102,32 +104,28 @@ useEffect(() => {
           const getData: MainData | undefined = mainData(guestLang);
           setData(getData);
 
-          // 🛠️ DYNAMIC META TAG UPDATE LOGIC
+          // DYNAMIC META TAG UPDATE LOGIC
           const titleText = guestLang === 'ru' ? 'Георгий и Эдвин' : 'Georgy & Edwine';
           const descText = guestLang === 'ru' 
             ? 'Вы приглашены на свадьбу Георгия и Эдвин!' 
             : "You are invited to Georgy & Edwine's wedding!";
 
-          // Update browser tab title
           document.title = titleText;
 
-          // Locate and rewrite Open Graph tags dynamically
           document.querySelector('meta[property="og:title"]')?.setAttribute('content', titleText);
           document.querySelector('meta[property="og:description"]')?.setAttribute('content', descText);
         } else {
-          // 🔄 Redirect to main page if the ID doesn't exist in the fetched list
           navigate('/', { replace: true });
         }
       } catch (error) {
         console.error('Error fetching guest:', error);
-        // Optional: redirect on fetch error as well
         navigate('/', { replace: true });
       } finally {
         setLoading(false);
       }
     };
     if (id) fetchGuestData();
-  }, [id, navigate]); // Add navigate to the dependency array
+  }, [id, navigate]); 
 
   useEffect(() => {
     if (showInvitation && invitationRef.current) {
@@ -159,8 +157,8 @@ useEffect(() => {
             note: tempNote,
             lang: lang,
             coming: {
-                adults: tempComing ? tempAdults : 0,
-                under18: tempComing ? tempUnder18 : 0
+              adults: tempComing ? tempAdults : 0,
+              under18: tempComing ? tempUnder18 : 0
             }
           }),
           headers: { 'Content-Type': 'application/json' },
@@ -176,8 +174,9 @@ useEffect(() => {
     }
   };
 
+  // Fixed hook referencing the bundled binary asset module instead of a static string URL
   useEffect(() => {
-    audioRef.current = new Audio('/audio/bg-music.mp3');
+    audioRef.current = new Audio(weddingMusic);
     audioRef.current.loop = true; 
     audioRef.current.volume = 0.3;
 
@@ -221,7 +220,7 @@ useEffect(() => {
     if (audioRef.current) {
       audioRef.current.play()
         .then(() => {
-          setIsPlaying(true); // Explicitly update state on successful resolve
+          setIsPlaying(true); 
         })
         .catch(error => {
           console.error("Audio playback failed:", error);
@@ -230,7 +229,6 @@ useEffect(() => {
     }
   };
 
-  // New action to toggle play state cleanly
   const toggleMute = () => {
     if (!audioRef.current) return;
 
@@ -248,7 +246,6 @@ useEffect(() => {
   return (
     <div className={`container ${!showInvitation ? 'no-scroll' : ''}`}>
       
-      {/* 🎵 Floating Mute/Unmute Audio Control Button */}
       {showInvitation && (
         <button 
           onClick={toggleMute}
